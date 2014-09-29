@@ -1,0 +1,19 @@
+d		# ch
+Dog		# name
+a dog		# desc short
+A wide-eyed ...	# desc long
+1		# color
+0		# class
+1 5		# dungeon lev min/max
+8 16		# HP min/max
+0 0		# MP min/max
+50 50		# AP min/max
+8 8		# STR CON
+12 3		# DEX INT
+4 2		# WIS CHA
+0 0		# FOR REF
+0 0		# WIL INI
+0 0		# MLE RNG
+0 0		# BAC BAB
+7		# FLAGS
+0 0 0 0 0 0 0   # EQ SLOTS

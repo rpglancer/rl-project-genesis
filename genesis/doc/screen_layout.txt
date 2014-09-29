@@ -1,0 +1,28 @@
+           1         2         3         4         5         6         7
+ 01234567890123456789012345678901234567890123456789012345678901234567890123456789
++--------------------------------------------------------------------------------+
+|PlayernameX the TitleXXXXXSTR:XX INT:XX Playername casts spell on entity.       |0	< RESERVED SYSMSG / CHAR INFO
+|Raceish ClassnameXXXXXXXXXCON:XX WIS:XX Playername has moved south.             |1	< RESERVED SYSMSG / CHAR INFO
+|HPC/HPM MPC/MPM APC/APMXXXDEX:XX CHA:XX Playername does xxx damage to entity    |2	< RESERVED SYSMSG / CHAR INFO
+|                                                                                |3	< MAPDRAW
+|                                                                                |4	< MAPDRAW
+|                                                                                |5	< MAPDRAW
+|                                                                                |6	< MAPDRAW
+|                                                                                |7	< MAPDRAW
+|                                                                                |8	< MAPDRAW
+|                                                                                |9	< MAPDRAW
+|                                                                                |0-1	< MAPDRAW
+|                                                                                |1	< MAPDRAW
+|                                                                                |2	< MAPDRAW
+|                                                                                |3	< MAPDRAW
+|                                                                                |4	< MAPDRAW
+|                                                                                |5	< MAPDRAW
+|                                                                                |6	< MAPDRAW
+|                                                                                |7	< MAPDRAW
+|                                                                                |8	< MAPDRAW
+|                                                                                |9	< MAPDRAW
+|                                                                                |0-2	< MAPDRAW
+|                                                                                |1	< MAPDRAW
+|                                                                                |2	< MAPDRAW
+|                                                                                |3	< MAPDRAW
++--------------------------------------------------------------------------------+

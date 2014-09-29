@@ -1,0 +1,12 @@
++/				# ch(closed) ch(open)
+Wood_door			# name
+a_wooden_door			# desc short
+A_decaying_wooden_door.		# desc long
+2				# color
+1				# Type of object?
+1 5				# dLev min/max
+0				# isLocked
+0				# isOpen
+0				# isPassable
+0				# keyID/keyNum
+0				# Flags
