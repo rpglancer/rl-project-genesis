@@ -1,0 +1,8 @@
+Warrior		# Class Name
+24 26		# Max STR, Max CON
+20 18		# Max DEX, Max INT
+20 18		# Max WIS, Max CHA
+2 0		# FORT bonus, RFLX bonus
+0 0		# WILL bonus, INIT bonus
+3 2		# MELE bonus, RNGD bonus
+10 10		# BaseAC, BaseAB

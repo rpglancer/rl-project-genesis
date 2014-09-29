@@ -1,0 +1,11 @@
+short_sword		#name
+0			#size
+2			#type
+8			#wearflag
+0			#useflag
+20			#weight
+0			#AC
+2			#dmgType
+1			#dmgRoll
+8			#dmgSize
+0			#dmgMod

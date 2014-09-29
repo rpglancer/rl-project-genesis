@@ -1,0 +1,13 @@
+HIGH PRIORITY
+1: Occasional failure of the BSP to come up with a usable map
+
+2: Occasional floating point error [div0]- possibly related to 1.
+
+
+MODERATE:
+1:The MSGQUEUE in a first in last out system, so as it stands now
+player actions are evauluated last.
+
+
+MINOR:
+1: The frame [border] of the map is never evaluated for wall fill.

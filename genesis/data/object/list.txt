@@ -1,0 +1,3 @@
+wood_door
+wood_chest
+red_door
