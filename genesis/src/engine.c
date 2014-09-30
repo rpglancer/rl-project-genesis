@@ -530,9 +530,44 @@ void loadCurrent(){
 
 void manageEq(){
 	bool eqOK = false;
+	int y = 1;
 	WINDOW *win_eq = newWindow(10, 20, MAXHEIGHT/2, MAXWIDTH / 2);
-	mvwprintw(win_eq, 0, 0, "Equipment");
+	EQUIPMENT *cur;// = (EQUIPMENT *)((CREATURE *)player->ent)->equipment;
+	mvwprintw(win_eq, 0, 8, "-- Equipment --");
+	for(cur = (EQUIPMENT *)((CREATURE *)player->ent)->equipment, y = 1; cur != NULL; cur = cur->next, y++){
+		switch(cur->slot){
+			case WEAR_HEAD:
+				mvwprintw(win_eq, y, 0, "Head: ");
+				if(cur->item != NULL) wprintw(win_eq, "%s", cur->item->itemName);
+				break;
+			case WEAR_BODY:
+				mvwprintw(win_eq, y, 0, "Body: ");
+				if(cur->item != NULL) wprintw(win_eq, "%s", cur->item->itemName);
+				break;
+			case WEAR_WIELD_L:
+				mvwprintw(win_eq, y, 0, "L.Hand: ");
+				if(cur->item != NULL) wprintw(win_eq, "%s", cur->item->itemName);
+				break;
+			case WEAR_WIELD_R:
+				mvwprintw(win_eq, y, 0, "R.Hand: ");
+				if(cur->item != NULL) wprintw(win_eq, "%s", cur->item->itemName);
+				break;
+			case WEAR_HANDS:
+				mvwprintw(win_eq, y, 0, "Hands: ");
+				if(cur->item != NULL) wprintw(win_eq, "%s", cur->item->itemName);
+				break;
+			case WEAR_LEGS:
+				mvwprintw(win_eq, y, 0, "Legs: ");
+				if(cur->item != NULL) wprintw(win_eq, "%s", cur->item->itemName);
+				break;
+			case WEAR_FEET:
+				mvwprintw(win_eq, y, 0, "Feet: ");
+				if(cur->item) wprintw(win_eq, "%s", cur->item->itemName);
+				break;
+		}
+	}
 	while(!eqOK){
+		wrefresh(win_eq);
 		genesis->ch = getch();
 		switch(genesis->ch){
 			case 27:
