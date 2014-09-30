@@ -161,6 +161,12 @@ size_t getClassCount(CLASSSTATS *list){
 	return count;
 }
 
+void delCreature(CREATURE *creature){
+	if(creature == NULL) return;
+	free(creature);
+	creature = NULL;
+}
+
 void setCreatureStats(CREATURE *creature, CREATURESTATS *stats, int level){
 	if(!creature || !stats) return;
 	int sT = 1;

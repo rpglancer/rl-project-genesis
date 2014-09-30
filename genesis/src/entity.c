@@ -214,6 +214,34 @@ bool canHear(ENTITY *src, ENTITY *tgt){
 }
 
 /*	Delete specified entity		*/
+void delEnt(ENTITY *entity){
+	if(entity == player) return;
+	ENTITY *temp = ENTROOT;
+	void *e = NULL;
+	while(temp->next != entity) temp = temp->next;
+	if(entity->next == NULL) temp->next = NULL;
+	else temp->next = entity->next;
+	switch(entity->category){
+		case C_CREATURE:
+			e = (CREATURE *)entity->ent;
+			if( ((CREATURE *)e)->equipment != NULL) delEq( ((CREATURE *)e)->equipment);
+			delCreature(e);
+		//	if(c->inventory != NULL) delEq(c->inventory);
+			break;
+		case C_ITEM:
+			e = (_ITEM *)entity->ent;
+			delItem(e);
+			break;
+		case C_OBJECT:
+			e = (OBJECT *)entity->ent;
+			delObject(e);
+			break;
+	}
+	free(entity);
+	entity = NULL;
+}
+//old
+/*
 int delEnt(ENTITY *del){
 	if(del == player) return 1;
 	for(ENTCURRENT = ENTROOT; ENTCURRENT->next != del; ENTCURRENT = ENTCURRENT->next){
@@ -235,7 +263,7 @@ int delEnt(ENTITY *del){
 	}
 	return ERR_NONE;
 }
-
+*/
 /*	Delete all entities		*/
 ENTITY *delEntList(ENTITY *entity){
 	if(entity == NULL) return NULL;

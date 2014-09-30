@@ -45,6 +45,11 @@ typedef struct EQUIPMENT{
 
 _ITEMSTATS *ITEMLIST;
 
+_ITEM *newItem();
+
 EQUIPMENT *addSlot(EQUIPMENT *list, int slotType);
+
+void delEquipment(EQUIPMENT *eq);
+void delItem(_ITEM *item);
 
 #endif

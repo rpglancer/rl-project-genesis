@@ -25,4 +25,20 @@ _ITEM *newItem(){
 	return i;
 }
 
+void delItem(_ITEM *item){
+	if(item == NULL) return;
+	free(item);
+	item = NULL;
+}
+
+void delEq(EQUIPMENT *eq){
+	if(eq == NULL) return;
+	while(eq != NULL){
+		EQUIPMENT *temp = eq->next;
+		if(eq->item != NULL) delItem(eq->item);
+		free(eq);
+		eq = temp;
+	}
+}
+
 #endif

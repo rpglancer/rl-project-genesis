@@ -33,6 +33,7 @@ OBJECTSTATS *getObjects(OBJECTSTATS *list, unsigned int level, unsigned int type
 OBJECTSTATS *loadObject(LL *list);
 OBJECTSTATS *seekObject(OBJECTSTATS *list, char *name);
 
+void delObject(OBJECT *obj);
 void setObjectStats(OBJECT *obj, OBJECTSTATS *stats);
 
 #endif

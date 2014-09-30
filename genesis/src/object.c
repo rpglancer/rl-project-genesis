@@ -102,6 +102,12 @@ OBJECTSTATS *seekObject(OBJECTSTATS *list, char *name){
 	return o;
 }
 
+void delObject(OBJECT *obj){
+	if(obj == NULL) return;
+	free(obj);
+	obj = NULL;
+}
+
 void setObjectStats(OBJECT *obj, OBJECTSTATS *stats){
 	if(!obj || !stats)return;
 	obj->type = stats->type;

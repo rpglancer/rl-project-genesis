@@ -50,12 +50,13 @@ bool seedFurniture(int level);
 bool seedTraps(int level);
 bool seedTreasure(int level);
 
-int delEnt(ENTITY *);
+//int delEnt(ENTITY *);
 int initEnt();
 
 unsigned int countEnt();
 
 void addFlag(ENTITY *e, int flag);
+void delEnt(ENTITY *entity);
 void delFlag(ENTITY *e, int flag);
 void drawEnt();
 void setClass(ENTITY *entity);

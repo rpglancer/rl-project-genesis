@@ -62,6 +62,8 @@ CREATURESTATS *delCreatureList(CREATURESTATS *list);	// Delete all available cre
 CREATURESTATS *loadCreature(LL *list);			// Load creature file into memory
 
 size_t getClassCount(CLASSSTATS *list);
+
+void delCreature(CREATURE *creature);
 void setCreatureStats(CREATURE *creature, CREATURESTATS *stats, int level);
 
 #endif

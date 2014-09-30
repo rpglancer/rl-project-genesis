@@ -337,9 +337,9 @@ int engineUpdate(){
 							MSGCURRENT->source->locX -= 1;
 							break;
 					}
+					if(MSGCURRENT->source == player) pushHistory(MSGCURRENT->source, MSGCURRENT->target, MSGCURRENT->msgType, MSGCURRENT->msgFlag);
+					if(MSGCURRENT->source == player) setViewCurrent(player->locY, player->locX);
 				}
-				if(MSGCURRENT->source == player) pushHistory(MSGCURRENT->source, MSGCURRENT->target, MSGCURRENT->msgType, MSGCURRENT->msgFlag);
-				if(MSGCURRENT->source == player) setViewCurrent(player->locY, player->locX);
 				break;
                         case MSG_ATTACK:
 				doCombat( (CREATURE *)MSGCURRENT->source->ent, (CREATURE *)MSGCURRENT->target->ent  );
