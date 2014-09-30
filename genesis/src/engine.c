@@ -186,6 +186,9 @@ void engineInput(){
 		case 'c':
 			selectObject(MSG_CLOSE);
 			break;
+		case 'e':
+			manageEq();
+			break;
 		case 'l':
 			loadCurrent();
 			refresh();		// test
@@ -523,6 +526,9 @@ void loadCurrent(){
 	player = ENTROOT;
 	player->ent = ENTROOT->ent;
 	fclose(f);
+}
+
+void manageEq(){
 }
 
 void saveCurrent(){
