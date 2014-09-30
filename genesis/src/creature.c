@@ -1,7 +1,7 @@
 #ifndef _C_CREATURE
 #define _C_CREATURE
 #include "../include/creature.h"
-
+// toast
 CLASSSTATS *addClass(CLASSSTATS *list){
 	if(list == NULL){
 		list = (CLASSSTATS *)calloc(1, sizeof(CLASSSTATS));
