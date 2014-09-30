@@ -529,6 +529,23 @@ void loadCurrent(){
 }
 
 void manageEq(){
+	bool eqOK = false;
+	WINDOW *win_eq = newWindow(10, 20, MAXHEIGHT/2, MAXWIDTH / 2);
+	mvwprintw(win_eq, 0, 0, "Equipment");
+	while(!eqOK){
+		genesis->ch = getch();
+		switch(genesis->ch){
+			case 27:
+				eqOK = true;
+				break;
+			case 'q':
+				eqOK = true;
+				break;
+		}
+	}
+	delWindow(win_eq);
+	refresh();
+	return;
 }
 
 void saveCurrent(){

@@ -4,6 +4,7 @@
 #include "entity.h"
 #include "map.h"
 #include "msg.h"
+#include "winmgr.h"
 
 typedef struct ENGINE{
 	int ch;			// Engine input character
@@ -18,6 +19,8 @@ typedef struct ENGINE{
 ENGINE *genesis;
 
 /*	Function Prototypes	*/
+
+
 bool checkArea(ENTITY *src, ENTITY *tgt, unsigned int rad);
 bool checkCombat(ENTITY *src, unsigned int dir);
 bool checkCreature(ENTITY *entity, unsigned int dir);
