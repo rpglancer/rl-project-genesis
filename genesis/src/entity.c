@@ -29,6 +29,7 @@ ENTITY *doClose(ENTITY *entity){
 	}
 	return entity;
 }
+
 /*
 *	See: "doClose()"
 */
@@ -69,6 +70,7 @@ ENTITY *spawnCreature(ENTITY *list, CREATURESTATS *creature, unsigned int level,
 		if(creature->eqSlots[i] == true) slotCount++;
 	}
 	size_t s = sizeof(ENTITY) + sizeof(CREATURE) + (sizeof(EQUIPMENT) * slotCount) + (sizeof(_ITEM) * slotCount);
+//	size_t s = sizeof(ENTITY) + sizeof(CREATURE);
 	if(list == NULL){
 		e = (ENTITY *)calloc(1, s);
 		if(e == NULL) return NULL;
@@ -98,6 +100,7 @@ ENTITY *spawnCreature(ENTITY *list, CREATURESTATS *creature, unsigned int level,
 	return list;
 }
 
+/*
 ENTITY *spawnItem(ENTITY *list, _ITEM *item, unsigned int level, unsigned int y, unsigned int x){
 	if(item == NULL) return list;
 	ENTITY *e = list;
@@ -122,6 +125,7 @@ ENTITY *spawnItem(ENTITY *list, _ITEM *item, unsigned int level, unsigned int y,
 	e->locY = y;
 	e->locX = x;
 }
+*/
 
 ENTITY *spawnObject(ENTITY *list, OBJECTSTATS *object, unsigned int level, unsigned int y, unsigned int x){
 	if(object == NULL) return list;
@@ -224,7 +228,7 @@ void delEnt(ENTITY *entity){
 	switch(entity->category){
 		case C_CREATURE:
 			e = (CREATURE *)entity->ent;
-			if( ((CREATURE *)e)->equipment != NULL) delEq( ((CREATURE *)e)->equipment);
+//			if( ((CREATURE *)e)->equipment != NULL) delEq( ((CREATURE *)e)->equipment);
 			delCreature(e);
 		//	if(c->inventory != NULL) delEq(c->inventory);
 			break;
@@ -271,14 +275,7 @@ ENTITY *delEntList(ENTITY *entity){
 		ENTITY *nextE = entity->next;
 		switch(entity->category){
 			case C_CREATURE:
-				if( ((CREATURE *)entity->ent)->equipment != NULL){
-					while( ((CREATURE *)entity->ent)->equipment != NULL ){
-						EQUIPMENT *temp = (EQUIPMENT *)((CREATURE *)entity->ent)->equipment->next;
-						free( ((CREATURE *)entity->ent)->equipment );
-						((CREATURE *)entity->ent)->equipment = NULL;
-						((CREATURE *)entity->ent)->equipment = temp;
-					}
-				}
+				// No longer allocated, should free up with the ent being removed...
 				break;
 			case C_OBJECT:
 				if( ((OBJECT *)entity->ent)->contents != NULL){
@@ -533,5 +530,48 @@ bool seedCreature(int level, unsigned int ft){
 	free(seed);
 	seed = NULL;
 	return true;
+}
+
+void spawnItem(ENTITY *list, _ITEMSTATS *item, unsigned int level, unsigned int y, unsigned int x){
+	if(item == NULL) return;
+	ENTITY *e = list;
+	size_t s = sizeof(ENTITY) + sizeof(_ITEM);
+	if(list == NULL){
+		e = (ENTITY *)calloc(1,s);
+		if(e == NULL) return;
+		list = e;
+	}
+	else{
+		while(e->next != NULL) e = e->next;
+		e->next = (ENTITY *)calloc(1,s);
+		if(e->next == NULL) return;
+		e = e->next;
+	}
+	if(!(e->ent = newItem())){
+		free(e);
+		e = NULL;
+		return;
+	}
+	_ITEM *temp = (_ITEM *)e->ent;
+	memcpy(&temp->itemName, &item->itemName, sizeof(temp->itemName));
+	memcpy(&temp->itemSize, &item->itemSize, sizeof(temp->itemSize));
+	memcpy(&temp->itemType, &item->itemType, sizeof(temp->itemType));
+	memcpy(&temp->itemWearFlags, &item->itemWearF, sizeof(temp->itemWearFlags));
+	memcpy(&temp->itemUseFlags, &item->itemUseF, sizeof(temp->itemUseFlags));
+	memcpy(&temp->itemWeight, &item->itemWeight, sizeof(temp->itemWeight));
+	memcpy(&temp->itemAC, &item->itemAC, sizeof(temp->itemAC));
+	memcpy(&temp->itemDmgType, &item->itemDmgType, sizeof(temp->itemDmgType));
+	memcpy(&temp->itemDmgRoll, &item->itemDmgRoll, sizeof(temp->itemDmgRoll));
+	memcpy(&temp->itemDmgSize, &item->itemDmgSize, sizeof(temp->itemDmgSize));
+	memcpy(&temp->itemDmgMod, &item->itemDmgMod, sizeof(temp->itemDmgMod));
+	e->ch = item->ch;
+	e->color = 2;
+	e->locY = y;
+	e->locX = x;
+}
+
+void TEST_seedItem(){
+	spawnItem(ENTROOT, ITEMLIST, 0, player->locY - 1, player->locX - 1);
+	return;
 }
 #endif

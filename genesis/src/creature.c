@@ -43,7 +43,7 @@ CLASSSTATS *loadClass(LL *list){
 	CLASSSTATS *class = NULL;
 	CLASSSTATS *c = NULL;
 	for(l = list; l != NULL; l = l->next){
-		size_t i;
+//		size_t i;
 		FILE *load = fopen(l->fileToLoad, "r");
 		if(load == NULL) return NULL;
 		class = addClass(class);
@@ -166,13 +166,43 @@ void delCreature(CREATURE *creature){
 	creature = NULL;
 }
 
-void manageEq(CREATURE *creature, unsigned int slot){
+void displayInventory(CREATURE *creature){
+	char select = '>';
+	int cursY = 1;
+	int cursX = 0;
+	bool invOK = false;
 	if(creature == NULL) return;
-	EQUIPMENT *eq;
-	for(eq = creature->equipment; eq != NULL; eq = eq->next){
-		if(eq->slot = slot) break;
+	WINDOW *win_inv = newWindow(10, 20, MAXHEIGHT/2, MAXWIDTH/2);
+	while(!invOK){
+		wclear(win_inv);
+		mvwprintw(win_inv, 0, 10, "-- Inventory --");
+		size_t i;
+		int y;
+		for(i = 0, y = 1; i < 10; i++, y++){
+			mvwprintw(win_inv, y, 0, "%s", creature->inventory[i].itemName);
+		}
+		wrefresh(win_inv);
+		switch(getch()){
+			case 'q':
+				invOK = true;
+				break;
+			default:
+				break;
+		}
 	}
-	if(eq == NULL) return;
+	delWindow(win_inv);
+	refresh();
+	return;
+}
+
+void getItem(CREATURE *creature, _ITEM *item){
+	if(!creature || !item) return;
+	size_t i = 0;
+	creature->inventory[i] = *item;
+}
+
+void manageEq(CREATURE *creature, unsigned int slot){
+	return;
 }
 
 void setCreatureStats(CREATURE *creature, CREATURESTATS *stats, int level){
@@ -180,7 +210,10 @@ void setCreatureStats(CREATURE *creature, CREATURESTATS *stats, int level){
 	int sT = 1;
 	size_t i;
 	for(i = 0; i < 7; i++){
-		if(stats->eqSlots[i] == true) creature->equipment = addSlot(creature->equipment, sT), ++creature->slotCount;
+//		if(stats->eqSlots[i] == true) creature->equipment = addSlot(creature->equipment, sT), ++creature->slotCount;
+		if(stats->eqSlots[i] == true) creature->equipment[i].isAvailable = true;
+		else creature->equipment[i].isAvailable = false;
+		creature->equipment[i].slot = sT;
 		sT = sT * 2;
 	}
 	creature->hpMax = getRand_i(stats->hpMin, stats->hpMax);

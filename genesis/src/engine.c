@@ -123,12 +123,21 @@ int didHit(CREATURE *src, CREATURE *tgt){
 
 int getDmg(CREATURE *src, CREATURE *tgt){
 	int dmg = 0;
+/*
 	EQUIPMENT *eq = src->equipment;
 	while(eq != NULL){
 		if(eq->slot == WEAR_WIELD_R){
 			if(eq->item != NULL) break;
 		}
 		eq = eq->next;
+	}
+*/
+	EQUIPMENT *eq = NULL;
+	size_t i;
+	for(i = 0; i < 7; i++){
+		if(src->equipment[i].slot == WEAR_WIELD_R && src->equipment[i].item){
+			eq = &src->equipment[i];
+		}
 	}
 	if(eq == NULL){
 		// Unarmed
@@ -186,8 +195,14 @@ void engineInput(){
 		case 'c':
 			selectObject(MSG_CLOSE);
 			break;
+		case 'd':
+			displayInventory((CREATURE *)player->ent);
+			break;
 		case 'e':
-			displayEq();
+//			displayEq();
+			break;
+		case 'g':
+			selectObject(MSG_GET);
 			break;
 		case 'l':
 			loadCurrent();
@@ -348,6 +363,9 @@ int engineUpdate(){
 					if(((CREATURE *)MSGCURRENT->target->ent)->hp <= 0) delFlag( MSGCURRENT->target, FLAG_ISALIVE);
 				}
 				break;
+			case MSG_GET:
+				getItem( (CREATURE *)MSGCURRENT->source->ent , (_ITEM *)MSGCURRENT->target->ent);
+				break;
 			case MSG_OPEN:
 				ENTCURRENT = seekEntity(MSGCURRENT->target);
 				if(ENTCURRENT != NULL){
@@ -361,10 +379,6 @@ int engineUpdate(){
 					pushHistory(MSGCURRENT->source, MSGCURRENT->target, MSGCURRENT->msgType, MSGCURRENT->msgFlag);
 					ENTCURRENT = doClose(ENTCURRENT);
 				}
-				break;
-			case MSG_NOISE:
-				break;
-			case MSG_SIGHT:
 				break;
 			default:
 				break;
@@ -392,6 +406,8 @@ int loadAssets(){
 	ARTLIST = loadArt(artLoad);
 	LL *creatureLoad = loadList(TYPE_CREATURE);
 	CREATURELIST = loadCreature(creatureLoad);
+	LL *itemLoad = loadList(TYPE_ITEM);
+	ITEMLIST = loadItem(itemLoad);
 	LL *objectLoad = loadList(TYPE_OBJECT);
 	OBJECTLIST = loadObject(objectLoad);
 	LL *classLoad = loadList(TYPE_CLASS);
@@ -401,6 +417,7 @@ int loadAssets(){
 	artLoad = delLoadList(artLoad);
 	classLoad = delLoadList(classLoad);
 	creatureLoad = delLoadList(creatureLoad);
+	itemLoad = delLoadList(itemLoad);
 	objectLoad = delLoadList(objectLoad);
 	return ERR_NONE;
 }
@@ -539,38 +556,6 @@ void displayEq(){
 	while(!eqOK){
 		wclear(win_eq);
 		mvwprintw(win_eq, 0, 10, "-- Equipment --");
-		for(cur = (EQUIPMENT *)((CREATURE *)player->ent)->equipment, y = 1; cur != NULL; cur = cur->next, y++){
-			switch(cur->slot){
-				case WEAR_HEAD:
-					mvwprintw(win_eq, y, 1, "Head: ");
-					if(cur->item) wprintw(win_eq, "%s", cur->item->itemName);
-					break;
-				case WEAR_BODY:
-					mvwprintw(win_eq, y, 1, "Body: ");
-					if(cur->item) wprintw(win_eq, "%s", cur->item->itemName);
-					break;
-				case WEAR_WIELD_L:
-					mvwprintw(win_eq, y, 1, "L.Hand: ");
-					if(cur->item) wprintw(win_eq, "%s", cur->item->itemName);
-					break;
-				case WEAR_WIELD_R:
-					mvwprintw(win_eq, y, 1, "R.Hand: ");
-					if(cur->item) wprintw(win_eq, "%s", cur->item->itemName);
-					break;
-				case WEAR_HANDS:
-					mvwprintw(win_eq, y, 1, "Hands: ");
-					if(cur->item) wprintw(win_eq, "%s", cur->item->itemName);
-					break;
-				case WEAR_LEGS:
-					mvwprintw(win_eq, y, 1, "Legs: ");
-					if(cur->item) wprintw(win_eq, "%s", cur->item->itemName);
-					break;
-				case WEAR_FEET:
-					mvwprintw(win_eq, y, 1, "Feet: ");
-					if(cur->item) wprintw(win_eq, "%s", cur->item->itemName);
-					break;
-			}
-		}
 		mvwaddch(win_eq, cursY, cursX, select);
 		wrefresh(win_eq);
 		genesis->ch = getch();
@@ -691,14 +676,16 @@ void selectObject(unsigned int msg){
 				break;
 			case '\n':
 				for(ENTCURRENT = ENTROOT; ENTCURRENT != NULL; ENTCURRENT = ENTCURRENT->next){
-					if(ENTCURRENT->category == C_OBJECT &&
-					ENTCURRENT->locY == cursY + VIEW->y - WINSTARTY &&
+					if(ENTCURRENT->locY == cursY + VIEW->y - WINSTARTY &&
 					ENTCURRENT->locX == cursX + VIEW->x){
 						switch(msg){
-							case MSG_OPEN:
+							case MSG_CLOSE:
 								pushMsg(player, ENTCURRENT, msg, 0);
 								break;
-							case MSG_CLOSE:
+							case MSG_GET:
+								pushMsg(player, ENTCURRENT, msg, 0);
+								break;
+							case MSG_OPEN:
 								pushMsg(player, ENTCURRENT, msg, 0);
 								break;
 							default:

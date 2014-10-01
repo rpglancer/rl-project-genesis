@@ -3,6 +3,7 @@
 #include "const.h"
 #include "item.h"
 #include "util.h"
+#include "winmgr.h"
 
 typedef struct CLASSSTATS{
 	char name[15];
@@ -26,8 +27,8 @@ typedef struct CREATURE{
         int FOR, REF, WIL, INI, MLE, RNG;
         int atk, def;                           // Attack, Defense [obsolete]
         int invCount, slotCount;                // Inventory Count, Equipment Slots
-        INVENTORY *inventory;                   // Inventory
-        EQUIPMENT *equipment;                   // Equipment
+	_ITEM inventory[10];
+	EQUIPMENT equipment[7];
 }CREATURE;
 
 /*      CREATURESTATS structure         */
@@ -63,7 +64,10 @@ CREATURESTATS *loadCreature(LL *list);			// Load creature file into memory
 
 size_t getClassCount(CLASSSTATS *list);
 
+void displayInventory(CREATURE *creature);
 void delCreature(CREATURE *creature);
+void dropItem(INVENTORY *inv);
+void getItem(CREATURE *creature, _ITEM *item);
 void manageEq(CREATURE *creature, unsigned int slot);
 void setCreatureStats(CREATURE *creature, CREATURESTATS *stats, int level);
 

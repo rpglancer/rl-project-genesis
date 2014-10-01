@@ -1,6 +1,7 @@
 #ifndef H_ITEM
 #define H_ITEM
 #include "const.h"
+#include "util.h"
 
 typedef struct _ITEM{
 	char itemName[20];
@@ -32,20 +33,25 @@ typedef struct _ITEMSTATS{
 	struct _ITEMSTATS *next;
 }_ITEMSTATS;
 
+/*	This is obsolete shit, do not use it	*/
 typedef struct INVENTORY{
 	_ITEM *item;
 	struct INVENTORY *next;
 }INVENTORY;
 
+
 typedef struct EQUIPMENT{
+	bool isAvailable;
 	unsigned int slot;
 	_ITEM *item;
-	struct EQUIPMENT *next;
 }EQUIPMENT;
 
 _ITEMSTATS *ITEMLIST;
 
 _ITEM *newItem();
+_ITEMSTATS *addItem(_ITEMSTATS *list);
+_ITEMSTATS *delItemList(_ITEMSTATS *list);
+_ITEMSTATS *loadItem(LL *list);
 
 EQUIPMENT *addSlot(EQUIPMENT *list, int slotType);
 

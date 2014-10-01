@@ -163,8 +163,8 @@ enum MESSAGES{
 	MSG_CLOSE = 6,		// Close message
 	MSG_USE = 7,		// Use message
 	MSG_CAST = 8,		// Cast message
-	MSG_NOISE = 9,		// Noise message	[probably better elsewhere]
-	MSG_SIGHT = 10,		// Sight message	[probably better elsewhere]
+	MSG_GET = 9,		// Get message
+	MSG_DROP = 10,		// Drop message
 };
 
 enum LOADTYPE{

@@ -111,6 +111,7 @@ int initMap(int sy, int sx, int nr, int ft, int wt){
 	for(i = 0; i < 25; i++){
 		seedCreature(genesis->floor, ft);	// Keep this out until seedCreature is revised to use spawnCreatur()
 	}
+	TEST_seedItem();
 	return ERR_NONE;
 }
 

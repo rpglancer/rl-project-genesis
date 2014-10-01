@@ -44,13 +44,11 @@ ENTITY *seekEntity(ENTITY *entity);
 
 bool canHear(ENTITY *src, ENTITY *tgt);
 bool checkFlag(ENTITY *, int flag);
-//bool delFlag(ENTITY *, int flag);
 bool seedCreature(int level, unsigned int ft);
 bool seedFurniture(int level);
 bool seedTraps(int level);
 bool seedTreasure(int level);
 
-//int delEnt(ENTITY *);
 int initEnt();
 
 unsigned int countEnt();
@@ -62,6 +60,7 @@ void drawEnt();
 void setClass(ENTITY *entity);
 void setName(ENTITY *entity);
 void setRace(ENTITY *entity);
-
+void spawnItem(ENTITY *list, _ITEMSTATS *item, unsigned int level, unsigned int y, unsigned int x);
+void TEST_seedItem();
 
 #endif
