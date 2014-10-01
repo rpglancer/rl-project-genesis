@@ -269,6 +269,13 @@ int getRand_i(int min, int max){
 	return rand() %(max - min) + min;	// This seems too easy.
 }
 
+void logEntry(char *text){
+	FILE *log = fopen("genesislog.txt", "a");
+	if(log == NULL) return;
+	fprintf(log, "%s\n", text);
+	fclose(log);
+}
+
 /*	Seed the random number generator		*/
 /*	Should return a failure value			*/
 void seedRand(){

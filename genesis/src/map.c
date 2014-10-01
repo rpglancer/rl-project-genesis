@@ -77,41 +77,71 @@ void fillWall(struct TILE *map, int sy, int sx, int ft, int wt){
 }
 
 int initMap(int sy, int sx, int nr, int ft, int wt){
+	logEntry("Begin initMap()");
 	if(MAP != NULL){
+		logEntry("[WARNING] MAP not NULL.");
 		MAP = mapFree(MAP);
 	}
+	logEntry("Begin mapAllocate()");
 	MAP = mapAllocate(MAP, sy, sx);
 	if(MAP == NULL) return ERR_MALLOC;
+	logEntry("mapAllocate() OK!");
 	int y, x;
+	logEntry("Begin bspNew()");
 	BSPROOT = bspNew(BSPROOT, sy, sx, 4);
 	if(BSPROOT == NULL) return ERR_MALLOC;
+	logEntry("bspNew() OK!");
+	logEntry("Begin bspRecursive()");
 	bspRecursive(BSPROOT, nr);
+	logEntry("bspRecursive() OK!");
+	logEntry("Begin bspResize()");
 	bspDoResize(BSPROOT, nr);
+	logEntry("bspResize() OK!");
+	logEntry("Begin fillMap()");
 	fillMap(MAP, sy, sx, TILE_BLANK);
+	logEntry("fillMap() OK!");
 	MAPTAIL = &MAP[(sy * sx) - 1];
+	logEntry("Begin bspDrawRooms()");
 	bspDrawRooms(BSPROOT, MAP, nr, sy, sx, ft, wt);
+	logEntry("bspDrawRooms() OK!");
 	int r = nr - 1;
+	logEntry("Begin bspLinkRooms()");
 	for(r; r >= 0; r--){
 		bspLinkRooms(BSPROOT, MAP, r, sy, sx, ft);
 	}
+	logEntry("bspLinkRooms() OK!");
 	int d;
+	logEntry("Begin bspAddDoors(()");
 	bspAddDoors(BSPROOT, MAP, nr, sx, ft, wt);
+	logEntry("bspAddDoors() OK!");
+	logEntry("Begin fillWall()");
 	fillWall(MAP, sy, sx, ft, wt);
+	logEntry("fillWall() OK!");
+	logEntry("Begin fillStairs()");
 	fillStairs(MAP, sy, sx, ft);
+	logEntry("fillStairs() OK!");
+	logEntry("Seeking suitable position to start player.");
 	do{
 		y = getRand_i(0, sy);
 		x = getRand_i(0, sx);
 	}while(MAP[CM(y,sx,x)].tT != ft);
+	logEntry("Suitable position found.");
 	player->locY = y;
 	player->locX = x;
+	logEntry("Recording map maximum values to ENGINE.");
 	genesis->maxY = sy;
 	genesis->maxX = sx;
+	logEntry("Begin bspDel()");
 	bspDel(BSPROOT);
+	logEntry("bspDel() OK!");
 	int i;
+	logEntry("begin seedCreature()");
 	for(i = 0; i < 25; i++){
 		seedCreature(genesis->floor, ft);	// Keep this out until seedCreature is revised to use spawnCreatur()
 	}
+	logEntry("seedCreature() OK!");
 	TEST_seedItem();
+	logEntry("initMap() OK!");
 	return ERR_NONE;
 }
 

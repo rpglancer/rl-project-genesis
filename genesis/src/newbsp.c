@@ -70,6 +70,19 @@ void bspSplit(BSP *bsp, int direction, int position){
 		bsp->right->y = position;
 		bsp->right->h = bsp->h;
 	}
+/*
+	FILE *log = fopen("bsplog.txt", "a");
+	if(log == NULL) return;
+	fprintf(log, "%i %i %i %i %i %p %p %p\n", bsp->level,
+						bsp->y,
+						bsp->x,
+						bsp->h,
+						bsp->w,
+						bsp->father,
+						bsp->left,
+						bsp->right);
+	fclose(log);
+*/
 }
 
 void bspRecursive(BSP *bsp, int depth){
@@ -141,7 +154,6 @@ bool bspAddDoors(BSP *bsp, struct TILE *map, int level, int sx, int ft, int wt){
 	OBJECTSTATS *toUse = NULL;
 	toUse = getObjects(toUse, level, OBJ_DOOR);
 	if(toUse == NULL) return false;
-//	int count = sizeof(toUse) / sizeof(toUse[0]);
 	size_t count = 0;
 	OBJECTSTATS *c;
 	for(c = toUse; c != NULL; c = c->next){
@@ -160,7 +172,6 @@ bool bspAddDoors(BSP *bsp, struct TILE *map, int level, int sx, int ft, int wt){
 							size_t random = getRand_i(0, count);
 							for(c = toUse; random != 0; c = c->next, random--);
 							spawnObject(ENTROOT, c, level, y, x);
-//							ENTROOT = spawnObject(ENTROOT, c, level, y, x);
 						}
 					}
 				}
@@ -213,11 +224,14 @@ bool bspLinkRooms(BSP *bsp, struct TILE *map, int level, int sy, int sx, int ft)
 	if(bsp->level == level){
 		int startY, endY, startX, endX, lengthY, lengthX, x, y;
 		startY = endY = startX = endX = lengthY = lengthX = x = y = 0;
+		unsigned attempts = 0;
 		do{
 			startY = getRand_i( (bsp->left->y), (bsp->left->h) );
 			endY = getRand_i( (bsp->right->y), (bsp->right->h) );
 			startX = getRand_i( (bsp->left->x), (bsp->left->w) );
 			endX = getRand_i( (bsp->right->x), (bsp->right->w) );
+			attempts++;
+			if(attempts == 10000) break;
 		}while (map[CM(startY,sx,startX)].tT != ft ||
 			map[CM(endY,sx,endX)].tT != ft);
 		lengthY = endY - startY;

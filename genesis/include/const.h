@@ -2,6 +2,7 @@
 #define H_CONST
 #include <menu.h>
 #include <ncurses.h>
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
