@@ -194,9 +194,13 @@ void displayInventory(CREATURE *creature){
 	refresh();
 	return;
 }
+void dropItem(CREATURE *creature, _ITEM *item){
+	if(creature == NULL || item == NULL) return;
+	size_t i = 0;
+}
 
 void getItem(CREATURE *creature, _ITEM *item){
-	if(!creature || !item) return;
+	if(creature == NULL || item == NULL) return;
 	size_t i = 0;
 	creature->inventory[i] = *item;
 }
@@ -210,7 +214,6 @@ void setCreatureStats(CREATURE *creature, CREATURESTATS *stats, int level){
 	int sT = 1;
 	size_t i;
 	for(i = 0; i < 7; i++){
-//		if(stats->eqSlots[i] == true) creature->equipment = addSlot(creature->equipment, sT), ++creature->slotCount;
 		if(stats->eqSlots[i] == true) creature->equipment[i].isAvailable = true;
 		else creature->equipment[i].isAvailable = false;
 		creature->equipment[i].slot = sT;

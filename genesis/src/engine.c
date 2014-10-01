@@ -365,20 +365,26 @@ int engineUpdate(){
 				break;
 			case MSG_GET:
 				getItem( (CREATURE *)MSGCURRENT->source->ent , (_ITEM *)MSGCURRENT->target->ent);
+				if(MSGCURRENT->target){
+					MSGCURRENT->target->ent = NULL;
+					delEnt(MSGCURRENT->target);
+				}
 				break;
 			case MSG_OPEN:
-				ENTCURRENT = seekEntity(MSGCURRENT->target);
-				if(ENTCURRENT != NULL){
-					pushHistory(MSGCURRENT->source, MSGCURRENT->target, MSGCURRENT->msgType, MSGCURRENT->msgFlag);
-					ENTCURRENT = doOpen(ENTCURRENT);
-				}
+				doOpen(seekEntity(MSGCURRENT->target));
+				//ENTCURRENT = seekEntity(MSGCURRENT->target);
+				//if(ENTCURRENT != NULL){
+				//	pushHistory(MSGCURRENT->source, MSGCURRENT->target, MSGCURRENT->msgType, MSGCURRENT->msgFlag);
+				//	ENTCURRENT = doOpen(ENTCURRENT);
+				//}
 				break;
 			case MSG_CLOSE:
-				ENTCURRENT = seekEntity(MSGCURRENT->target);
-				if(ENTCURRENT != NULL){
-					pushHistory(MSGCURRENT->source, MSGCURRENT->target, MSGCURRENT->msgType, MSGCURRENT->msgFlag);
-					ENTCURRENT = doClose(ENTCURRENT);
-				}
+				doClose(seekEntity(MSGCURRENT->target));
+				//ENTCURRENT = seekEntity(MSGCURRENT->target);
+				//if(ENTCURRENT != NULL){
+				//	pushHistory(MSGCURRENT->source, MSGCURRENT->target, MSGCURRENT->msgType, MSGCURRENT->msgFlag);
+				//	ENTCURRENT = doClose(ENTCURRENT);
+				//}
 				break;
 			default:
 				break;

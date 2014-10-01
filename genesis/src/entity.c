@@ -9,47 +9,6 @@ unsigned int FLAG_ARRAY[] = {
 	FLAG_ISMOBILE,
 };
 
-/*
-*	This will need to be reworded to handle multiple types
-*	of objects without a switch/case for each one.
-*/
-ENTITY *doClose(ENTITY *entity){
-	if(entity == NULL) return NULL;
-	if(entity->category != C_OBJECT) return entity;
-	if(entity->ent == NULL) return entity;
-	((OBJECT *)entity->ent)->isOpen = false;
-	OBJECTSTATS *temp = seekObject(OBJECTLIST, entity->name);
-	entity->ch = temp->chClosed;
-	switch( ((OBJECT *)entity->ent)->type){
-		case OBJ_DOOR:
-			((OBJECT *)entity->ent)->isPassable = false;
-			break;
-		default:
-			break;
-	}
-	return entity;
-}
-
-/*
-*	See: "doClose()"
-*/
-ENTITY *doOpen(ENTITY *entity){
-	if(entity == NULL) return NULL;
-	if(entity->category != C_OBJECT) return entity;
-	if(entity->ent == NULL) return entity;
-	((OBJECT *)entity->ent)->isOpen = true;
-	OBJECTSTATS *temp = seekObject(OBJECTLIST, entity->name);
-	entity->ch = temp->chOpen;
-	switch( ((OBJECT *)entity->ent)->type){
-		case OBJ_DOOR:
-			((OBJECT *)entity->ent)->isPassable = true;
-			break;
-		default:
-			break;
-	}
-	return entity;
-}
-
 /*	Find a specific entity				*/
 ENTITY *seekEntity(ENTITY *entity){
 	if(entity == NULL) return NULL;
@@ -58,106 +17,6 @@ ENTITY *seekEntity(ENTITY *entity){
 		if(ENTCURRENT == entity) return ENTCURRENT;
 	}
 	return NULL;
-}
-
-/*	Spawn specified creature of level at location	*/
-ENTITY *spawnCreature(ENTITY *list, CREATURESTATS *creature, unsigned int level, unsigned int y, unsigned int x){
-	if(creature == NULL) return list;
-	ENTITY *e = list;
-	int slotCount = 0;
-	size_t i;
-	for(i = 0; i < 7; i++){
-		if(creature->eqSlots[i] == true) slotCount++;
-	}
-	size_t s = sizeof(ENTITY) + sizeof(CREATURE) + (sizeof(EQUIPMENT) * slotCount) + (sizeof(_ITEM) * slotCount);
-//	size_t s = sizeof(ENTITY) + sizeof(CREATURE);
-	if(list == NULL){
-		e = (ENTITY *)calloc(1, s);
-		if(e == NULL) return NULL;
-		list = e;
-	}
-	else{
-		while(e->next != NULL) e = e->next;
-		e->next = (ENTITY *)calloc(1,s);
-		if(e->next == NULL) return list;
-		e = e->next;
-	}
-	if(!(e->ent = newCreature())){
-		free(e);
-		e = NULL;
-		return list;
-	}
-	e->category = C_CREATURE;
-	strcpy(e->name, creature->name);
-	strcpy(e->shortDesc, creature->shortDesc);
-	strcpy(e->longDesc, creature->longDesc);
-	e->ch = creature->ch;
-	e->color = creature->color;
-	e->flags = creature->flags;
-	e->locY = y;
-	e->locX = x;
-	setCreatureStats( (CREATURE *)e->ent, creature, genesis->floor);
-	return list;
-}
-
-/*
-ENTITY *spawnItem(ENTITY *list, _ITEM *item, unsigned int level, unsigned int y, unsigned int x){
-	if(item == NULL) return list;
-	ENTITY *e = list;
-	size_t s = sizeof(ENTITY) + sizeof(_ITEM);
-	if(list == NULL){
-		e = (ENTITY *)calloc(1, s);
-		if(e == NULL) return NULL;
-		list = e;
-	}
-	else{
-		while(e->next != NULL) e = e->next;
-		e->next = (ENTITY *)calloc(1,s);
-		if(e->next == NULL) return list;
-		e = e->next;
-	}
-	if(!(e->ent = newItem())){
-		free(e);
-		e = NULL;
-		return list;
-	}
-	e->category = C_ITEM;
-	e->locY = y;
-	e->locX = x;
-}
-*/
-
-ENTITY *spawnObject(ENTITY *list, OBJECTSTATS *object, unsigned int level, unsigned int y, unsigned int x){
-	if(object == NULL) return list;
-	ENTITY *o = list;
-	size_t s = sizeof(ENTITY) + sizeof(OBJECT);
-	if(list == NULL){
-		o = (ENTITY *)calloc(1, s);
-		if(o == NULL) return NULL;
-		list = o;
-	}
-	else{
-		while(o->next != NULL) o = o->next;
-		o->next = (ENTITY *)calloc(1,s);
-		if(o->next == NULL) return list;
-		o = o->next;
-	}
-	if(!(o->ent = newObject())){
-		free(o);
-		o = NULL;
-		return list;
-	}
-	o->category = C_OBJECT;
-	strcpy(o->name, object->name);
-	strcpy(o->shortDesc, object->shortDesc);
-	strcpy(o->longDesc, object->longDesc);
-	o->color = object->color;
-	o->flags = object->flags;
-	o->locY = y;
-	o->locX = x;
-	setObjectStats( (OBJECT *)o->ent, object);
-	( ((OBJECT *)o->ent)->isOpen ) ? (o->ch = object->chOpen) : (o->ch = object->chClosed);
-	return list;
 }
 
 /*	Get a count of all currently active entities.	*/
@@ -209,9 +68,6 @@ bool canHear(ENTITY *src, ENTITY *tgt){
 		 return false;
 	}
 	if(checkArea(src, tgt, ((CREATURE *)src->ent)->WIS)){
-//		FILE *log = fopen("log.txt", "a");
-///		fprintf(log, "function canHear() src = %s, tgt = %s returning TRUE\n", src->name, tgt->name);
-//		fclose(log);
 		return true;
 	}
 	return false;
@@ -228,9 +84,7 @@ void delEnt(ENTITY *entity){
 	switch(entity->category){
 		case C_CREATURE:
 			e = (CREATURE *)entity->ent;
-//			if( ((CREATURE *)e)->equipment != NULL) delEq( ((CREATURE *)e)->equipment);
 			delCreature(e);
-		//	if(c->inventory != NULL) delEq(c->inventory);
 			break;
 		case C_ITEM:
 			e = (_ITEM *)entity->ent;
@@ -244,30 +98,7 @@ void delEnt(ENTITY *entity){
 	free(entity);
 	entity = NULL;
 }
-//old
-/*
-int delEnt(ENTITY *del){
-	if(del == player) return 1;
-	for(ENTCURRENT = ENTROOT; ENTCURRENT->next != del; ENTCURRENT = ENTCURRENT->next){
-		if(ENTCURRENT == NULL) return 1;
-	}
-	if(ENTCURRENT->next->next == NULL){
-		free(ENTCURRENT->next->ent);
-		ENTCURRENT->next->ent = NULL;
-		free(ENTCURRENT->next);
-		ENTCURRENT->next = NULL;
-	}
-	else{
-		ENTITY *temp = ENTCURRENT->next->next;
-		free(ENTCURRENT->next->ent);
-		ENTCURRENT->next->ent = NULL;
-		free(ENTCURRENT->next);
-		ENTCURRENT->next = NULL;
-		ENTCURRENT->next = temp;
-	}
-	return ERR_NONE;
-}
-*/
+
 /*	Delete all entities		*/
 ENTITY *delEntList(ENTITY *entity){
 	if(entity == NULL) return NULL;
@@ -355,6 +186,36 @@ void displayClass(int class){
 	mvprintw(y+5, x, "bnsMLE: %2i bnsRNG: %2i", cs->bonusMLE, cs->bonusRNG);
 	mvprintw(y+6, x, "baseAC: %2i baseAB: %2i", cs->baseAC, cs->baseAB);
 	return;
+}
+
+void doClose(ENTITY *entity){
+	if(entity == NULL || entity->ent == NULL || entity->category != C_OBJECT) return;
+	OBJECTSTATS *stats = seekObject(OBJECTLIST, entity->name);
+	OBJECT *object = (OBJECT *)entity->ent;
+	entity->ch = stats->chClosed;
+	object->isOpen = false;
+	switch(object->type){
+		case OBJ_DOOR:
+			object->isPassable = false;
+			break;
+		default:
+			break;
+	}
+}
+
+void doOpen(ENTITY *entity){
+	if(entity == NULL || entity->ent == NULL || entity->category != C_OBJECT) return;
+	OBJECTSTATS *stats = seekObject(OBJECTLIST, entity->name);
+	OBJECT *object = (OBJECT *)entity->ent;
+	entity->ch = stats->chOpen;
+	object->isOpen = true;
+	switch(object->type){
+		case OBJ_DOOR:
+			object->isPassable = true;
+			break;
+		default:
+			break;
+	}
 }
 
 void rollStats(CREATURE *creature){
@@ -490,7 +351,7 @@ void setName(ENTITY *entity){
 
 /*	Add the player entity to the root of the entities list		*/
 int initEnt(){
-	ENTROOT = spawnCreature(ENTROOT, CREATURELIST, 1, 0, 0);
+	spawnCreature(ENTROOT, CREATURELIST, 1, 0, 0);
 	if(ENTROOT == NULL) return ERR_MALLOC;
 	player = ENTROOT;
 	player->ent = ENTROOT->ent;
@@ -525,11 +386,49 @@ bool seedCreature(int level, unsigned int ft){
 			x = getRand_i(0, genesis->maxX);
 		}while(MAP[CM(y, genesis->maxX, x)].tT != ft);
 		unsigned int s = getRand_i(0, creaturecount);
-		ENTROOT = spawnCreature(ENTROOT, &seed[s], level, y, x);
+		spawnCreature(ENTROOT, &seed[s], level, y, x);
 	}
 	free(seed);
 	seed = NULL;
 	return true;
+}
+
+void spawnCreature(ENTITY *list, CREATURESTATS *creature, unsigned int level, unsigned int y, unsigned int x){
+	if(creature == NULL) return;
+	ENTITY *e = list;
+	int slotCount = 0;
+	size_t i;
+	for(i = 0; i < 7; i++){
+		if(creature->eqSlots[i] == true) slotCount++;
+	}
+	size_t s = sizeof(ENTITY) + sizeof(CREATURE) + (sizeof(_ITEM) * slotCount);
+	if(list == NULL){
+		e = (ENTITY *)calloc(1, s);
+		if(e == NULL) return;
+		ENTROOT = e;
+//		list = e;
+	}
+	else{
+		while(e->next != NULL) e = e->next;
+		e->next = (ENTITY *)calloc(1, s);
+		if(e->next == NULL) return;
+		e = e->next;
+	}
+	if(!(e->ent = newCreature())){
+		free(e);
+		e = NULL;
+		return;
+	}
+	e->category = C_CREATURE;
+	memcpy(e->name, creature->name, sizeof(e->name));
+	memcpy(e->shortDesc, creature->shortDesc, sizeof(e->shortDesc));
+	memcpy(e->longDesc, creature->longDesc, sizeof(e->longDesc));
+	e->ch = creature->ch;
+	e->color = creature->color;
+	e->flags = creature->flags;
+	e->locY = y;
+	e->locX = x;
+	setCreatureStats( (CREATURE *)e->ent, creature, genesis->floor);
 }
 
 void spawnItem(ENTITY *list, _ITEMSTATS *item, unsigned int level, unsigned int y, unsigned int x){
@@ -568,6 +467,38 @@ void spawnItem(ENTITY *list, _ITEMSTATS *item, unsigned int level, unsigned int 
 	e->color = 2;
 	e->locY = y;
 	e->locX = x;
+}
+
+void spawnObject(ENTITY *list, OBJECTSTATS *object, unsigned int level, unsigned int y, unsigned int x){
+	if(object == NULL) return;
+	ENTITY *e = list;
+	size_t s = sizeof(ENTITY) + sizeof(OBJECT);
+	if(list == NULL){
+		e = (ENTITY *)calloc(1, s);
+		if(e == NULL) return;
+		list = e;
+	}
+	else{
+		while(e->next != NULL) e = e->next;
+		e->next = (ENTITY *)calloc(1, s);
+		if(e->next == NULL) return;
+		e = e->next;
+	}
+	if(!(e->ent = newObject())){
+		free(e);
+		e = NULL;
+		return;
+	}
+	e->category = C_OBJECT;
+	memcpy(e->name, object->name, sizeof(e->name));
+	memcpy(e->shortDesc, object->shortDesc, sizeof(e->shortDesc));
+	memcpy(e->longDesc, object->longDesc, sizeof(e->longDesc));
+	e->color = object->color;
+	e->flags = object->flags;
+	e->locY = y;
+	e->locX = x;
+	setObjectStats( (OBJECT *)e->ent, object);
+	( ((OBJECT *)e->ent)->isOpen ) ? (e->ch = object->chOpen) : (e->ch = object->chClosed);
 }
 
 void TEST_seedItem(){

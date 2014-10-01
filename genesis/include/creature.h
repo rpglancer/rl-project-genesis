@@ -66,7 +66,7 @@ size_t getClassCount(CLASSSTATS *list);
 
 void displayInventory(CREATURE *creature);
 void delCreature(CREATURE *creature);
-void dropItem(INVENTORY *inv);
+void dropItem(CREATURE *creature, _ITEM *item);
 void getItem(CREATURE *creature, _ITEM *item);
 void manageEq(CREATURE *creature, unsigned int slot);
 void setCreatureStats(CREATURE *creature, CREATURESTATS *stats, int level);

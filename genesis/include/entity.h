@@ -35,10 +35,8 @@ ENTITY *ENTROOT;
 ENTITY *player;
 
 ENTITY *delEntList(ENTITY *entity);
-ENTITY *doClose(ENTITY *entity);
-ENTITY *doOpen(ENTITY *entity);
-ENTITY *spawnCreature(ENTITY *list, CREATURESTATS *creature, unsigned int level, unsigned int y, unsigned int x);
-ENTITY *spawnObject(ENTITY *list, OBJECTSTATS *object, unsigned int level, unsigned int y, unsigned int x);
+//ENTITY *spawnCreature(ENTITY *list, CREATURESTATS *creature, unsigned int level, unsigned int y, unsigned int x);
+//ENTITY *spawnObject(ENTITY *list, OBJECTSTATS *object, unsigned int level, unsigned int y, unsigned int x);
 ENTITY *seekEntity(ENTITY *entity);
 
 
@@ -56,11 +54,15 @@ unsigned int countEnt();
 void addFlag(ENTITY *e, int flag);
 void delEnt(ENTITY *entity);
 void delFlag(ENTITY *e, int flag);
+void doClose(ENTITY *entity);
+void doOpen(ENTITY *entity);
 void drawEnt();
 void setClass(ENTITY *entity);
 void setName(ENTITY *entity);
 void setRace(ENTITY *entity);
+void spawnCreature(ENTITY *list, CREATURESTATS *creature, unsigned int level, unsigned int y, unsigned int x);
 void spawnItem(ENTITY *list, _ITEMSTATS *item, unsigned int level, unsigned int y, unsigned int x);
+void spawnObject(ENTITY *list, OBJECTSTATS *object, unsigned int level, unsigned int y, unsigned int x);
 void TEST_seedItem();
 
 #endif

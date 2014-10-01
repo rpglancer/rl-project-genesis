@@ -159,7 +159,8 @@ bool bspAddDoors(BSP *bsp, struct TILE *map, int level, int sx, int ft, int wt){
 						if(doorchance <= 3){
 							size_t random = getRand_i(0, count);
 							for(c = toUse; random != 0; c = c->next, random--);
-							ENTROOT = spawnObject(ENTROOT, c, level, y, x);
+							spawnObject(ENTROOT, c, level, y, x);
+//							ENTROOT = spawnObject(ENTROOT, c, level, y, x);
 						}
 					}
 				}
