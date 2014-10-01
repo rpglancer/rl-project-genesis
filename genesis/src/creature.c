@@ -86,7 +86,6 @@ CREATURESTATS *addCreature(CREATURESTATS *list){
 
 /*	Clear all creatures loaded into memory		*/
 CREATURESTATS *delCreatureList(CREATURESTATS *list){
-//	if(list == NULL) return NULL;		// Don't think I need this ...
 	while(list != NULL){
 		CREATURESTATS *temp = list->next;
 		free(list);
@@ -165,6 +164,15 @@ void delCreature(CREATURE *creature){
 	if(creature == NULL) return;
 	free(creature);
 	creature = NULL;
+}
+
+void manageEq(CREATURE *creature, unsigned int slot){
+	if(creature == NULL) return;
+	EQUIPMENT *eq;
+	for(eq = creature->equipment; eq != NULL; eq = eq->next){
+		if(eq->slot = slot) break;
+	}
+	if(eq == NULL) return;
 }
 
 void setCreatureStats(CREATURE *creature, CREATURESTATS *stats, int level){

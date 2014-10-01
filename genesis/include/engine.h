@@ -45,8 +45,8 @@ int loadAssets();
 int newGame();
 int titleScreen();
 
+void displayEq();			// Display equipment
 void loadCurrent();			// Load from disk
-void manageEq();			// Manage equipment
 void saveCurrent();			// Save to disk
 void selectObject(unsigned int msg);	// Replaced selectOpen for more universal support
 void setViewCurrent(int, int);		// Force the view port to y,x
