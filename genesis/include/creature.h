@@ -18,13 +18,19 @@ typedef struct CLASSSTATS{
 }CLASSSTATS;
 
 typedef struct CREATURE{
-        UINT class, level;              // Should probably have entity keep track of level
+	char ch;
+	char name[20];
+	char shortDesc[25];
+	char longDesc[50];
+	int flags;
+	uchar color;
+        UINT class, level;              	// Class and level
         int hp, hpMax;                          // Current HP / Maximum HP
         int mp, mpMax;                          // Current MP / Maximum MP
         int ap, apMax;                          // Current AP / Maximum AP
         int BAC, BAB;                           // Armor Class, AttackBonus
-        int STR, CON, DEX, INT, WIS, CHA;
-        int FOR, REF, WIL, INI, MLE, RNG;
+        int STR, CON, DEX, INT, WIS, CHA;	// Primary stats
+        int FOR, REF, WIL, INI, MLE, RNG;	// Secondary stats
         int atk, def;                           // Attack, Defense [obsolete]
         int invCount, slotCount;                // Inventory Count, Equipment Slots
 	_ITEM inventory[10];
@@ -33,9 +39,9 @@ typedef struct CREATURE{
 
 /*      CREATURESTATS structure         */
 typedef struct CREATURESTATS{
-        char name[15], shortDesc[25], longDesc[50], ch;         // Name, description and ASCII representation
-        UINT class, color, flags;                       // Class, color and flags
-        UINT dLevelMin, dLevelMax;                      // Minimum and maximum dungeon level
+        char name[20], shortDesc[25], longDesc[50], ch;         // Name, description and ASCII representation
+        UINT class, color, flags;                       	// Class, color and flags
+        UINT dLevelMin, dLevelMax;                     	 	// Minimum and maximum dungeon level
         int hpMin, hpMax;                                       // Minimum and maximum HP
         int mpMin, mpMax;                                       // Minimum and maximum MP
         int apMin, apMax;                                       // Minimum and maximum AP
@@ -69,7 +75,6 @@ size_t selectItem(CREP creature);
 
 void displayInventory(CREP creature);
 void delCreature(CREP creature);
-//void dropItem(CREATURE *creature, _ITEM *item);
 void getItem(CREP creature, ITEMP item);
 void manageEq(CREP creature, UINT slot);
 void setCreatureStats(CREP creature, CREATURESTATS *stats, int level);

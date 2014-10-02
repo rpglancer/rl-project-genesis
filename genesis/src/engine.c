@@ -164,22 +164,22 @@ void doCombat(CREATURE *src, CREATURE *tgt){
 }
 
 void drawHeader(){
-	mvprintw(0, 0,"%.10s the %.10s", player->name, player->name);	// Playername the Title
-	mvprintw(1, 0,"%.12s %.12s", player->name, PLAYERCLASS->name);	// Raceish Class
+	mvprintw(0, 0,"%.10s the %.10s", ((CREP)player->ent)->name, ((CREP)player->ent)->name);	// Playername the Title
+	mvprintw(1, 0,"%.12s %.12s", ((CREP)player->ent)->name, PLAYERCLASS->name);	// Raceish Class
 	attron(COLOR_PAIR(3));
 	attron(A_BOLD);
-	mvprintw(2, 0,"%3i/%3i", ((CREATURE *)player->ent)->hp, ((CREATURE *)player->ent)->hpMax);
+	mvprintw(2, 0,"%3i/%3i", ((CREP)player->ent)->hp, ((CREP)player->ent)->hpMax);
 	attroff(COLOR_PAIR(3));
 	attron(COLOR_PAIR(4));
-	mvprintw(2, 8,"%3i/%3i", ((CREATURE *)player->ent)->mp, ((CREATURE *)player->ent)->mpMax);
+	mvprintw(2, 8,"%3i/%3i", ((CREP)player->ent)->mp, ((CREP)player->ent)->mpMax);
 	attroff(COLOR_PAIR(4));
 	attron(COLOR_PAIR(5));
-	mvprintw(2, 16,"%3i/%3i", ((CREATURE *)player->ent)->ap, ((CREATURE *)player->ent)->apMax);
+	mvprintw(2, 16,"%3i/%3i", ((CREP)player->ent)->ap, ((CREP)player->ent)->apMax);
 	attroff(COLOR_PAIR(5));
 	attroff(A_BOLD);
-	mvprintw(0, 26, "STR:%2i INT:%2i", ((CREATURE *)player->ent)->STR, ((CREATURE *)player->ent)->INT);
-	mvprintw(1, 26, "CON:%2i WIS:%2i", ((CREATURE *)player->ent)->CON, ((CREATURE *)player->ent)->WIS);
-	mvprintw(2, 26, "DEX:%2i CHA:%2i", ((CREATURE *)player->ent)->DEX, ((CREATURE *)player->ent)->CHA);
+	mvprintw(0, 26, "STR:%2i INT:%2i", ((CREP)player->ent)->STR, ((CREP)player->ent)->INT);
+	mvprintw(1, 26, "CON:%2i WIS:%2i", ((CREP)player->ent)->CON, ((CREP)player->ent)->WIS);
+	mvprintw(2, 26, "DEX:%2i CHA:%2i", ((CREP)player->ent)->DEX, ((CREP)player->ent)->CHA);
 	printHistory();
 }
 
@@ -199,9 +199,6 @@ void engineInput(){
 			pushMsg(player, NULL, MSG_DROP, selectItem( (CREATURE *)player->ent));
 			// Select item to drop
 			break;
-		case 'e':
-//			displayEq();
-			break;
 		case 'g':
 			selectObject(MSG_GET);
 			break;
@@ -209,9 +206,9 @@ void engineInput(){
 			displayInventory((CREATURE *)player->ent);
 			break;
 		case 'l':
-			loadCurrent();
-			refresh();		// test
-			engineInput();		// test
+//			loadCurrent();
+//			refresh();
+//			engineInput();
 			break;
 		case 'o':
 			selectObject(MSG_OPEN);
@@ -220,8 +217,8 @@ void engineInput(){
 			genesis->engineStatus = ENGINESTOP;
 			break;
 		case 's':
-			saveCurrent();
-			engineInput();		// test
+//			saveCurrent();
+//			engineInput();
 			break;
 		case KEY_LEFT:
 			if(checkCombat(player, DIR_WEST)){
@@ -375,9 +372,6 @@ int engineUpdate(){
 				}
 				break;
 			case MSG_DROP:
-				if( ((CREATURE *)player->ent)->inventory[MSGCURRENT->msgFlag].itemType != ITEM_NONE  ){
-					moveItem( &((CREATURE *)player->ent)->inventory[MSGCURRENT->msgFlag]  );
-				}
 				break;
 			case MSG_OPEN:
 				doOpen(seekEntity(MSGCURRENT->target));
@@ -594,6 +588,7 @@ void displayEq(){
 	return;
 }
 
+/*
 void saveCurrent(){
 	FILE *g;
 	g = fopen("plaintext.txt","w");
@@ -605,7 +600,6 @@ void saveCurrent(){
 	fprintf(g, "MAXX: %i\n",genesis->maxX);
 	fprintf(g, "ENTC: %i\n",genesis->entC);
 	fprintf(g, "</ENGINE>\n");
-//	unsigned int i;
 	size_t i;
 	fprintf(g, "<MAP>\n");
 	for(i = 0; i < genesis->maxY * genesis->maxX; i++){
@@ -661,6 +655,7 @@ void saveCurrent(){
 	}
 	fclose(f);
 }
+*/
 
 void selectObject(unsigned int msg){
 	bool doSelect = true;

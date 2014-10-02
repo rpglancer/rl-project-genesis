@@ -45,6 +45,9 @@
 #define W(y,sx,x)	y * sx + (x-1)			// Tile to the west
 #define C(y,sx,x)	y * sx + x			// Tile currently on
 
+#define OFFSETY(Y)	Y - VIEW->y + WINSTARTY
+#define OFFSETX(X)	X - VIEW->x
+
 #define ARRAYSIZE(a)	sizeof(a)/sizeof(a[0])
 #define CREP CREATURE *
 #define ENTP ENTITY *

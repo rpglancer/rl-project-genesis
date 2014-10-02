@@ -16,18 +16,13 @@ typedef struct TRAP{
 
 /*		Entity structure		*/
 typedef struct ENTITY{
-	UINT category;		// The category of this entity
-	char name[15];			// Name of entity
-	char shortDesc[25];		// Short description of entity
-	char longDesc[50];		// Long description of entity
-	char ch;			// The ASCII character represnenting the entity
-	short color;			// The color pair of the entity
-	void *ent;			// The contents specific to the entity category
-	int locY;			// The Y coordinate of the entity [former uInt]
-	int locX;			// The X coordinate of the entity [former uInt]
-	int flags;			// Flags relevant to the entity
-	struct ENTITY *next;		// The next entity in the list
+	uchar category;
+	uchar locY;
+	uchar locX;
+	void *ent;
+	struct ENTITY *next;
 }ENTITY;
+
 
 /*		Global entity pointers		*/
 ENTP ENTCURRENT;
@@ -56,7 +51,6 @@ void delFlag(ENTP e, int flag);
 void doClose(ENTP entity);
 void doOpen(ENTP entity);
 void drawEnt();
-void moveItem(ITEMP item);
 void setClass(ENTP entity);
 void setName(ENTP entity);
 void setRace(ENTP *entity);

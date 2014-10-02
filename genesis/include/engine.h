@@ -21,14 +21,14 @@ ENGINE *genesis;
 /*	Function Prototypes	*/
 
 
-bool checkArea(ENTITY *src, ENTITY *tgt, unsigned int rad);
-bool checkCombat(ENTITY *src, unsigned int dir);
-bool checkCreature(ENTITY *entity, unsigned int dir);
-bool checkMove(ENTITY *entity, unsigned int dir);
-bool checkObject(ENTITY *entity, unsigned int dir);
-bool checkTile(ENTITY *entity, unsigned int dir);
+bool checkArea(ENTP src, ENTP tgt, uint rad);
+bool checkCombat(ENTP src, uint dir);
+bool checkCreature(ENTP entity, uint dir);
+bool checkMove(ENTP entity, uint dir);
+bool checkObject(ENTP entity, uint dir);
+bool checkTile(ENTP entity, uint dir);
 
-void doCombat(CREATURE *, CREATURE *);
+void doCombat(CREP, CREP);
 void drawCoords();			// Test function for printing certain coordinates
 void drawHeader();			// Draw relevant information at the top of the screen
 void engineDraw();			// Draw everything
@@ -48,7 +48,7 @@ int titleScreen();
 void displayEq();			// Display equipment
 void loadCurrent();			// Load from disk
 void saveCurrent();			// Save to disk
-void selectObject(unsigned int msg);	// Replaced selectOpen for more universal support
+void selectObject(uint msg);		// Replaced selectOpen for more universal support
 void setViewCurrent(int, int);		// Force the view port to y,x
 
 #endif

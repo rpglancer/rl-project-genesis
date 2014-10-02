@@ -24,9 +24,9 @@ extern struct TILE_TYPE TILE_INDEX[];
 
 /*		Map TILE structure		*/
 struct TILE{
-	int tX;			// X Coordinate
-	int tY;			// Y Coordinate
-	int tT;			// Type indicator
+	uchar tX;		// Tile X-coordinate
+	uchar tY;		// Tile Y-coordinate
+	uchar tT;		// Tile Type
 };
 
 /*		Global TILE structures		*/

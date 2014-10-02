@@ -20,8 +20,8 @@ MESSAGE *MSGCURRENT;			// Currently selected message
 /*		Text structure			*/
 typedef struct _TEXT{
 	char message[40];		// Text to display
-	char source[15];		// Name of source of text
-	char target[15];		// Name of target of text
+	char source[20];		// Name of source of text
+	char target[20];		// Name of target of text
 	struct _TEXT *next;		// The next text
 }_TEXT;
 

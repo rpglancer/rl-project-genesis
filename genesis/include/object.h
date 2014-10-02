@@ -5,18 +5,23 @@
 #include "util.h"
 
 typedef struct OBJECT{
-	unsigned int type;
+	char ch;
+	char chOpen, chClosed;
+	char name[20], shortDesc[25], longDesc[50];
+	int flags;
+	uchar color;
+	uint type;
 	bool isLocked;
 	bool isOpen;
 	bool isPassable;
-	unsigned int keyNum;
+	uint keyNum;
 	INVENTORY *contents;
 }OBJECT;
 
 OBJECT *newObject();
 
 typedef struct OBJECTSTATS{
-	char name[15], shortDesc[25], longDesc[50];
+	char name[20], shortDesc[25], longDesc[50];
 	char chClosed, chOpen;
 	unsigned int color, flags, type;
 	unsigned int dLevelMin, dLevelMax;

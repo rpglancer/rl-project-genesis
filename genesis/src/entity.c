@@ -31,36 +31,78 @@ UINT countEnt(){
 }
 
 void addFlag(ENTP e, int flag){
-	if(!checkFlag(e, flag)){
-		e->flags += flag;
+	switch(e->category){
+		case C_CREATURE:
+			if(!checkFlag(e, flag))((CREP)e->ent)->flags += flag;
+			return;
+		case C_ITEM:
+			if(!checkFlag(e, flag))((ITEMP)e->ent)->flags += flag;
+			return;
+		case C_OBJECT:
+			if(!checkFlag(e, flag))((OBJP)e->ent)->flags += flag;
+			return;
+		default:
+			return;
 	}
-	return;
 }
 
 void delFlag(ENTP e, int flag){
-	if(checkFlag(e, flag)){
-		e->flags -= flag;
+	switch(e->category){
+		case C_CREATURE:
+			if(!checkFlag(e, flag)) ((CREP)e->ent)->flags += flag;
+			return;
+		case C_ITEM:
+			if(!checkFlag(e, flag)) ((ITEMP)e->ent)->flags += flag;
+			return;
+		case C_OBJECT:
+			if(!checkFlag(e, flag)) ((OBJP)e->ent)->flags += flag;
+			return;
+		default:
+			return;
 	}
-	return;
 }
 
 /*	Check applied flags of specified entity		*/
 bool checkFlag(ENTP e, int flag){
-	if(flag > e->flags) return false;
-	if(flag == e->flags) return true;
-	int i = ARRAYSIZE(FLAG_ARRAY) - 1;
-	int check = e->flags;
-	while(i >= 0){
-		if(flag == FLAG_ARRAY[i]){
-			i--;
-		}
-		else{
-			check -= FLAG_ARRAY[i];
-			i--;
-		}
+	int eFlag;
+	switch(e->category){
+		case C_CREATURE:
+			eFlag = ((CREP)e->ent)->flags;
+			break;
+		case C_ITEM:
+			eFlag = ((ITEMP)e->ent)->flags;
+			break;
+		case C_OBJECT:
+			eFlag = ((OBJP)e->ent)->flags;
+			break;
+		default:
+			eFlag = 0;
+			break;
 	}
-	if(check - flag == 0) return true;
+	if(flag > eFlag) return false;
+	if(flag == eFlag) return true;
+	int i = ARRAYSIZE(FLAG_ARRAY) - 1;
+	while(i >= 0){
+		if(flag == FLAG_ARRAY[i]) i--;
+		else eFlag -= FLAG_ARRAY[i], i--;
+	}
+	if(eFlag - flag == 0) return true;
 	return false;
+//	if(flag > e->flags) return false;
+//	if(flag == e->flags) return true;
+//	int i = ARRAYSIZE(FLAG_ARRAY) - 1;
+//	int check = e->flags;
+//	while(i >= 0){
+//		if(flag == FLAG_ARRAY[i]){
+//			i--;
+//		}
+//		else{
+//			check -= FLAG_ARRAY[i];
+//			i--;
+//		}
+//	}
+//	if(check - flag == 0) return true;
+//	return false;
 }
 
 bool canHear(ENTP src, ENTP tgt){
@@ -131,7 +173,34 @@ ENTITY *delEntList(ENTP entity){
 	return entity;
 }
 
+void drawEnt(){
+	for(ENTCURRENT = ENTROOT; ENTCURRENT != NULL; ENTCURRENT = ENTCURRENT->next){
+		if(ENTCURRENT->locY - VIEW->y + WINSTARTY >= WINSTARTY){
+			char ch = '\0';
+			uchar color = 0;
+			switch(ENTCURRENT->category){
+				case C_CREATURE:
+					ch = ((CREP)ENTCURRENT->ent)->ch;
+					color = ((CREP)ENTCURRENT->ent)->color;
+					break;
+				case C_ITEM:
+					ch = ((ITEMP)ENTCURRENT->ent)->ch;
+					color = ((ITEMP)ENTCURRENT->ent)->color;
+					break;
+				case C_OBJECT:
+					ch = ((OBJP)ENTCURRENT->ent)->ch;
+					color = ((OBJP)ENTCURRENT->ent)->color;
+					break;
+			}
+			attron(COLOR_PAIR(color));
+			mvaddch(OFFSETY(ENTCURRENT->locY), OFFSETX(ENTCURRENT->locX), ch);
+			attroff(COLOR_PAIR(color));
+		}
+	}
+}
+
 /*	Draw entities to screen		*/
+/*
 void drawEnt(){
 	ENTCURRENT = ENTROOT;
 	for(ENTCURRENT; ENTCURRENT != NULL; ENTCURRENT = ENTCURRENT->next){
@@ -147,7 +216,7 @@ void drawEnt(){
 		mvaddch(player->locY - VIEW->y + WINSTARTY, player->locX - VIEW->x, player->ch);
 		attroff(COLOR_PAIR(player->color));
 	}
-}
+}*/
 
 int calcStatMod(int stat){
 	int mod = -5;
@@ -190,9 +259,10 @@ void displayClass(int class){
 
 void doClose(ENTP entity){
 	if(entity == NULL || entity->ent == NULL || entity->category != C_OBJECT) return;
-	OBJECTSTATS *stats = seekObject(OBJECTLIST, entity->name);
+//	OBJECTSTATS *stats = seekObject(OBJECTLIST, entity->name);
 	OBJP object = (OBJP)entity->ent;
-	entity->ch = stats->chClosed;
+//	entity->ch = stats->chClosed;
+	object->ch = object->chClosed;
 	object->isOpen = false;
 	switch(object->type){
 		case OBJ_DOOR:
@@ -205,9 +275,10 @@ void doClose(ENTP entity){
 
 void doOpen(ENTP entity){
 	if(entity == NULL || entity->ent == NULL || entity->category != C_OBJECT) return;
-	OBJECTSTATS *stats = seekObject(OBJECTLIST, entity->name);
+//	OBJECTSTATS *stats = seekObject(OBJECTLIST, entity->name);
 	OBJP object = (OBJP)entity->ent;
-	entity->ch = stats->chOpen;
+//	entity->ch = stats->chOpen;
+	object->ch = object->chOpen;
 	object->isOpen = true;
 	switch(object->type){
 		case OBJ_DOOR:
@@ -343,8 +414,11 @@ void setName(ENTP entity){
 			}
 		}
 		replaceChar(eName, sizeof(eName)/sizeof(eName[0]), '_', '\0');
-		replaceAll(player->name, sizeof(player->name) / sizeof(player->name[0]));
-		strcpy(player->name, eName);
+		CREP p = (CREP)player->ent;
+		replaceAll(p->name, ARRAYSIZE(p->name));
+		strcpy(p->name, eName);
+//		replaceAll(player->name, sizeof(player->name) / sizeof(player->name[0]));
+//		strcpy(player->name, eName);
 		nameOK = true;
 	}
 }
@@ -409,15 +483,6 @@ void addEnt(ENTP list, UINT category, UINT y, UINT x){
 	}
 }
 
-void moveItem(ITEMP item){
-	if(item == NULL) return;
-	addEnt(ENTROOT, C_ITEM, player->locY, player->locX);
-	ENTP temp = ENTROOT;
-	while(temp->next != NULL) temp = temp->next;
-	memcpy(temp->ent, item, sizeof(_ITEM));
-	item->itemType = ITEM_NONE;
-}
-
 void spawnCreature(ENTP list, CREATURESTATS *creature, UINT level, UINT y, UINT x){
 	if(creature == NULL) return;
 	ENTP e = list;
@@ -445,14 +510,23 @@ void spawnCreature(ENTP list, CREATURESTATS *creature, UINT level, UINT y, UINT 
 		return;
 	}
 	e->category = C_CREATURE;
-	memcpy(e->name, creature->name, sizeof(e->name));
-	memcpy(e->shortDesc, creature->shortDesc, sizeof(e->shortDesc));
-	memcpy(e->longDesc, creature->longDesc, sizeof(e->longDesc));
-	e->ch = creature->ch;
-	e->color = creature->color;
-	e->flags = creature->flags;
 	e->locY = y;
 	e->locX = x;
+	memcpy( ((CREP)e->ent)->name, creature->name, sizeof(((CREP)e->ent)->name));
+	memcpy( ((CREP)e->ent)->shortDesc, creature->shortDesc, sizeof(((CREP)e->ent)->shortDesc));
+	memcpy( ((CREP)e->ent)->longDesc, creature->longDesc, sizeof(((CREP)e->ent)->longDesc));
+/*	Legacy	*/
+//	memcpy(e->name, creature->name, sizeof(e->name));
+//	memcpy(e->shortDesc, creature->shortDesc, sizeof(e->shortDesc));
+//	memcpy(e->longDesc, creature->longDesc, sizeof(e->longDesc));
+//	e->ch = creature->ch;
+//	e->color = creature->color;
+//	e->flags = creature->flags;
+/*	/Legacy	*/
+	((CREP)e->ent)->ch = creature->ch;
+	((CREP)e->ent)->color = creature->color;
+	((CREP)e->ent)->flags = creature->flags;
+
 	setCreatureStats( (CREP)e->ent, creature, genesis->floor);
 }
 
@@ -476,7 +550,10 @@ void spawnItem(ENTP list, _ITEMSTATS *item, UINT level, UINT y, UINT x){
 		e = NULL;
 		return;
 	}
+	e->locY = y;
+	e->locX = x;
 	ITEMP temp = (ITEMP)e->ent;
+	memcpy(&temp->name, &item->itemName, sizeof(temp->itemName));
 	memcpy(&temp->itemName, &item->itemName, sizeof(temp->itemName));
 	memcpy(&temp->itemSize, &item->itemSize, sizeof(temp->itemSize));
 	memcpy(&temp->itemType, &item->itemType, sizeof(temp->itemType));
@@ -488,10 +565,12 @@ void spawnItem(ENTP list, _ITEMSTATS *item, UINT level, UINT y, UINT x){
 	memcpy(&temp->itemDmgRoll, &item->itemDmgRoll, sizeof(temp->itemDmgRoll));
 	memcpy(&temp->itemDmgSize, &item->itemDmgSize, sizeof(temp->itemDmgSize));
 	memcpy(&temp->itemDmgMod, &item->itemDmgMod, sizeof(temp->itemDmgMod));
-	e->ch = item->ch;
-	e->color = 2;
-	e->locY = y;
-	e->locX = x;
+	temp->ch = item->ch;
+	temp->color = 2;
+//	e->ch = item->ch;
+//	e->color = 2;
+//	((ITEMP)e->ent)->ch = item->ch;
+//	((ITEMP)e->ent)->color = item->color;
 }
 
 void spawnObject(ENTP list, OBJECTSTATS *object, UINT level, UINT y, UINT x){
@@ -515,15 +594,23 @@ void spawnObject(ENTP list, OBJECTSTATS *object, UINT level, UINT y, UINT x){
 		return;
 	}
 	e->category = C_OBJECT;
-	memcpy(e->name, object->name, sizeof(e->name));
-	memcpy(e->shortDesc, object->shortDesc, sizeof(e->shortDesc));
-	memcpy(e->longDesc, object->longDesc, sizeof(e->longDesc));
-	e->color = object->color;
-	e->flags = object->flags;
 	e->locY = y;
 	e->locX = x;
-	setObjectStats( (OBJP)e->ent, object);
-	( ((OBJP)e->ent)->isOpen ) ? (e->ch = object->chOpen) : (e->ch = object->chClosed);
+	OBJP o = (OBJP)e->ent;
+	o->color = object->color;
+	o->flags = object->flags;
+	o->chOpen = object->chOpen;
+	o->chClosed = object->chClosed;
+	setObjectStats(o, object);
+	(o->isOpen) ? (o->ch = o->chOpen) : (o->ch = o->chClosed);
+//	memcpy(e->name, object->name, sizeof(e->name));
+//	memcpy(e->shortDesc, object->shortDesc, sizeof(e->shortDesc));
+//	memcpy(e->longDesc, object->longDesc, sizeof(e->longDesc));
+//	e->color = object->color;
+//	e->flags = object->flags;
+//	setObjectStats( (OBJP)e->ent, object);
+//	( ((OBJP)e->ent)->isOpen ) ? (((OBJP)e->ent)->ch = object->chOpen) : (((OBJP)e->ent)->ch = object->chClosed);
+//	( ((OBJP)e->ent)->isOpen ) ? (e->ch = object->chOpen) : (e->ch = object->chClosed);
 }
 
 void TEST_seedItem(){
