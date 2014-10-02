@@ -20,6 +20,8 @@
 #define WINSTARTY	3
 #define WINENDX		24
 #define WINENDY		80
+#define MAXMAPHEIGHT	255
+#define MAXMAPWIDTH	255
 
 /*	Cheap tile finding macros	*/
 #define TL(y,sx,x) (y-1)*sx+(x-1)			// Top left tile
@@ -44,6 +46,21 @@
 #define C(y,sx,x)	y * sx + x			// Tile currently on
 
 #define ARRAYSIZE(a)	sizeof(a)/sizeof(a[0])
+#define CREP CREATURE *
+#define ENTP ENTITY *
+#define ITEMP _ITEM *
+#define OBJP OBJECT *
+
+typedef unsigned char UCHAR;
+typedef unsigned short USHORT;
+typedef unsigned int UINT;
+typedef unsigned long ULONG;
+typedef char schar;
+typedef UCHAR uchar;
+typedef USHORT ushort;
+typedef UINT uint;
+typedef ULONG ulong;
+
 
 /*	Enumerations			*/
 
@@ -61,11 +78,12 @@ enum DMG_TYPES{
 };
 
 enum ITEM_TYPES{
-	ITEM_CONSUMABLE = 0,
-	ITEM_KEYITEM = 1,
-	ITEM_WEAPON = 2,
-	ITEM_ARMOR = 3,
-	ITEM_ACC = 4,
+	ITEM_NONE = 0,
+	ITEM_CONSUMABLE = 1,
+	ITEM_KEYITEM = 2,
+	ITEM_WEAPON = 3,
+	ITEM_ARMOR = 4,
+	ITEM_ACC = 5,
 };
 
 enum OBJECT_TYPES{

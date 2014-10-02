@@ -27,7 +27,7 @@ CLASSSTATS *delClassList(CLASSSTATS *list){
 	return list;
 }
 
-CLASSSTATS *getClass(CLASSSTATS *list, CREATURE *creature){
+CLASSSTATS *getClass(CLASSSTATS *list, CREP creature){
 	if(!list || !creature) return NULL;
 	CLASSSTATS *cs = CLASSLIST;
 	int i;
@@ -64,7 +64,7 @@ CLASSSTATS *loadClass(LL *list){
 }
 
 CREATURE *newCreature(){
-	CREATURE *c = (CREATURE *)calloc(1, sizeof(CREATURE));
+	CREP c = (CREP)calloc(1, sizeof(CREATURE));
 	return c;
 }
 
@@ -160,13 +160,13 @@ size_t getClassCount(CLASSSTATS *list){
 	return count;
 }
 
-void delCreature(CREATURE *creature){
+void delCreature(CREP creature){
 	if(creature == NULL) return;
 	free(creature);
 	creature = NULL;
 }
 
-void displayInventory(CREATURE *creature){
+void displayInventory(CREP creature){
 	char select = '>';
 	int cursY = 1;
 	int cursX = 0;
@@ -179,7 +179,8 @@ void displayInventory(CREATURE *creature){
 		size_t i;
 		int y;
 		for(i = 0, y = 1; i < 10; i++, y++){
-			mvwprintw(win_inv, y, 0, "%s", creature->inventory[i].itemName);
+			if(creature->inventory[i].itemType != ITEM_NONE) mvwprintw(win_inv, y, 0, "%s", creature->inventory[i].itemName);
+			else mvwprintw(win_inv, y, 0, "[None]");
 		}
 		wrefresh(win_inv);
 		switch(getch()){
@@ -194,22 +195,69 @@ void displayInventory(CREATURE *creature){
 	refresh();
 	return;
 }
-void dropItem(CREATURE *creature, _ITEM *item){
+ITEMP dropItem(CREP creature, ITEMP item){
 	if(creature == NULL || item == NULL) return;
-	size_t i = 0;
+	size_t i;
+	for(i = 0; i < 10; i++){
+		if(&creature->inventory[i] == item){
+			ITEMP drop = item;
+			creature->inventory[i].itemType = ITEM_NONE;
+			return drop;
+		}
+	}
 }
 
-void getItem(CREATURE *creature, _ITEM *item){
-	if(creature == NULL || item == NULL) return;
-	size_t i = 0;
-	creature->inventory[i] = *item;
+size_t selectItem(CREP creature){
+	if(creature == NULL) return -1;
+	int cursY = 1;
+	int cursX = 0;
+	char select = '>';
+	bool selectOK = false;
+	WINDOW *select_item = newWindow(10, 20, MAXHEIGHT/2, MAXWIDTH/2);
+	while(!selectOK){
+		wclear(select_item);
+		mvwprintw(select_item, 0, 10, "-- Inventory --");
+		size_t i;
+		int y;
+		for(i = 0, y = 1; i < 10; i++, y++){
+			if(creature->inventory[i].itemType != ITEM_NONE) mvwprintw(select_item, y, 1, "%s", creature->inventory[i].itemName);
+			else mvwprintw(select_item, y, 1, "[None]");
+		}
+		mvwaddch(select_item, cursY, cursX, select);
+		wrefresh(select_item);
+		switch(getch()){
+			case KEY_UP:
+				if(cursY > 1) --cursY;
+				break;
+			case KEY_DOWN:
+				if(cursY < 10) ++cursY;
+				break;
+			case '\n':
+				i = cursY - 1;
+				delWindow(select_item);
+				refresh();
+				return i;
+		}
+	}
 }
 
-void manageEq(CREATURE *creature, unsigned int slot){
+void getItem(CREP creature, ITEMP item){
+	if(creature == NULL || item == NULL) return;
+	size_t i;
+	for(i = 0; i < 10; i++){
+		if(creature->inventory[i].itemType == ITEM_NONE){
+			creature->inventory[i] = *item;
+			break;
+		}
+	}
+//	creature->inventory[i] = *item;
+}
+
+void manageEq(CREP creature, UINT slot){
 	return;
 }
 
-void setCreatureStats(CREATURE *creature, CREATURESTATS *stats, int level){
+void setCreatureStats(CREP creature, CREATURESTATS *stats, int level){
 	if(!creature || !stats) return;
 	int sT = 1;
 	size_t i;

@@ -3,14 +3,14 @@
 #include "../include/entity.h"
 #include "../include/map.h"
 
-unsigned int FLAG_ARRAY[] = {
+UINT FLAG_ARRAY[] = {
 	FLAG_ISALIVE,
 	FLAG_ISVISIBLE,
 	FLAG_ISMOBILE,
 };
 
 /*	Find a specific entity				*/
-ENTITY *seekEntity(ENTITY *entity){
+ENTITY *seekEntity(ENTP entity){
 	if(entity == NULL) return NULL;
 	if(ENTROOT == NULL) return NULL;
 	for(ENTCURRENT = ENTROOT; ENTCURRENT != NULL; ENTCURRENT = ENTCURRENT->next){
@@ -20,8 +20,8 @@ ENTITY *seekEntity(ENTITY *entity){
 }
 
 /*	Get a count of all currently active entities.	*/
-unsigned int countEnt(){
-	unsigned int count = 0;
+UINT countEnt(){
+	UINT count = 0;
 	ENTCURRENT = ENTROOT;
 	if(ENTROOT == NULL || ENTCURRENT == NULL) return 0;
 	for(ENTCURRENT = ENTROOT; ENTCURRENT != NULL; ENTCURRENT = ENTCURRENT->next){
@@ -30,14 +30,14 @@ unsigned int countEnt(){
 	return count;
 }
 
-void addFlag(ENTITY *e, int flag){
+void addFlag(ENTP e, int flag){
 	if(!checkFlag(e, flag)){
 		e->flags += flag;
 	}
 	return;
 }
 
-void delFlag(ENTITY *e, int flag){
+void delFlag(ENTP e, int flag){
 	if(checkFlag(e, flag)){
 		e->flags -= flag;
 	}
@@ -45,7 +45,7 @@ void delFlag(ENTITY *e, int flag){
 }
 
 /*	Check applied flags of specified entity		*/
-bool checkFlag(ENTITY *e, int flag){
+bool checkFlag(ENTP e, int flag){
 	if(flag > e->flags) return false;
 	if(flag == e->flags) return true;
 	int i = ARRAYSIZE(FLAG_ARRAY) - 1;
@@ -63,7 +63,7 @@ bool checkFlag(ENTITY *e, int flag){
 	return false;
 }
 
-bool canHear(ENTITY *src, ENTITY *tgt){
+bool canHear(ENTP src, ENTP tgt){
 	if(src == NULL || tgt == NULL){
 		 return false;
 	}
@@ -74,24 +74,24 @@ bool canHear(ENTITY *src, ENTITY *tgt){
 }
 
 /*	Delete specified entity		*/
-void delEnt(ENTITY *entity){
+void delEnt(ENTP entity){
 	if(entity == player) return;
-	ENTITY *temp = ENTROOT;
+	ENTP temp = ENTROOT;
 	void *e = NULL;
 	while(temp->next != entity) temp = temp->next;
 	if(entity->next == NULL) temp->next = NULL;
 	else temp->next = entity->next;
 	switch(entity->category){
 		case C_CREATURE:
-			e = (CREATURE *)entity->ent;
+			e = (CREP)entity->ent;
 			delCreature(e);
 			break;
 		case C_ITEM:
-			e = (_ITEM *)entity->ent;
+			e = (ITEMP)entity->ent;
 			delItem(e);
 			break;
 		case C_OBJECT:
-			e = (OBJECT *)entity->ent;
+			e = (OBJP)entity->ent;
 			delObject(e);
 			break;
 	}
@@ -100,17 +100,17 @@ void delEnt(ENTITY *entity){
 }
 
 /*	Delete all entities		*/
-ENTITY *delEntList(ENTITY *entity){
+ENTITY *delEntList(ENTP entity){
 	if(entity == NULL) return NULL;
 	while(entity != NULL){
-		ENTITY *nextE = entity->next;
+		ENTP nextE = entity->next;
 		switch(entity->category){
 			case C_CREATURE:
 				// No longer allocated, should free up with the ent being removed...
 				break;
 			case C_OBJECT:
-				if( ((OBJECT *)entity->ent)->contents != NULL){
-					while( ((OBJECT *)entity->ent)->contents != NULL ) {
+				if( ((OBJP)entity->ent)->contents != NULL){
+					while( ((OBJP)entity->ent)->contents != NULL ) {
 						INVENTORY *temp = (INVENTORY *)((OBJECT *)entity->ent)->contents->next;
 						((OBJECT *)entity->ent)->contents = NULL;
 						((OBJECT *)entity->ent)->contents = temp;
@@ -188,10 +188,10 @@ void displayClass(int class){
 	return;
 }
 
-void doClose(ENTITY *entity){
+void doClose(ENTP entity){
 	if(entity == NULL || entity->ent == NULL || entity->category != C_OBJECT) return;
 	OBJECTSTATS *stats = seekObject(OBJECTLIST, entity->name);
-	OBJECT *object = (OBJECT *)entity->ent;
+	OBJP object = (OBJP)entity->ent;
 	entity->ch = stats->chClosed;
 	object->isOpen = false;
 	switch(object->type){
@@ -203,10 +203,10 @@ void doClose(ENTITY *entity){
 	}
 }
 
-void doOpen(ENTITY *entity){
+void doOpen(ENTP entity){
 	if(entity == NULL || entity->ent == NULL || entity->category != C_OBJECT) return;
 	OBJECTSTATS *stats = seekObject(OBJECTLIST, entity->name);
-	OBJECT *object = (OBJECT *)entity->ent;
+	OBJP object = (OBJP)entity->ent;
 	entity->ch = stats->chOpen;
 	object->isOpen = true;
 	switch(object->type){
@@ -218,7 +218,7 @@ void doOpen(ENTITY *entity){
 	}
 }
 
-void rollStats(CREATURE *creature){
+void rollStats(CREP creature){
 	if(creature == NULL) return;
 	bool statsOK = false;
 	int stats[6] = {0,0,0,0,0,0};
@@ -273,7 +273,7 @@ void rollStats(CREATURE *creature){
 	return;
 }
 
-void setClass(ENTITY *entity){
+void setClass(ENTP entity){
 	if(entity == NULL) return;
 	CLASSSTATS *cs = CLASSLIST;
 	size_t i;
@@ -315,10 +315,10 @@ void setClass(ENTITY *entity){
 		cs = cs->next;
 	}
 	if(cs != NULL)PLAYERCLASS = cs;
-	rollStats( (CREATURE *)entity->ent );
+	rollStats( (CREP)entity->ent );
 }
 
-void setName(ENTITY *entity){
+void setName(ENTP entity){
 	if(entity == NULL) return;
 	bool nameOK = false;
 	char eName[15] = {'_', '_','_','_','_','_','_','_','_','_','_','_','_','_','\0'};
@@ -358,7 +358,7 @@ int initEnt(){
 	return ERR_NONE;
 }
 
-bool seedCreature(int level, unsigned int ft){
+bool seedCreature(int level, UINT ft){
 	if(level < 1 || level > 99) return false;
 	int i, creaturecount;
 	CREATURESTATS *seed, *c;
@@ -385,7 +385,7 @@ bool seedCreature(int level, unsigned int ft){
 			y = getRand_i(0, genesis->maxY);
 			x = getRand_i(0, genesis->maxX);
 		}while(MAP[CM(y, genesis->maxX, x)].tT != ft);
-		unsigned int s = getRand_i(0, creaturecount);
+		UINT s = getRand_i(0, creaturecount);
 		spawnCreature(ENTROOT, &seed[s], level, y, x);
 	}
 	free(seed);
@@ -393,9 +393,34 @@ bool seedCreature(int level, unsigned int ft){
 	return true;
 }
 
-void spawnCreature(ENTITY *list, CREATURESTATS *creature, unsigned int level, unsigned int y, unsigned int x){
+void addEnt(ENTP list, UINT category, UINT y, UINT x){
+	if(list == NULL) return;
+	ENTP e = list;
+	while(e->next != NULL) e = e->next;
+	switch(category){
+		case C_ITEM:
+			e->category = category;
+			e->next = (ENTP)calloc(1, sizeof(ENTITY) + sizeof(_ITEM));
+			break;
+		default:
+			e->category = category;
+			e->next = (ENTP)calloc(1, sizeof(ENTITY));
+			break;
+	}
+}
+
+void moveItem(ITEMP item){
+	if(item == NULL) return;
+	addEnt(ENTROOT, C_ITEM, player->locY, player->locX);
+	ENTP temp = ENTROOT;
+	while(temp->next != NULL) temp = temp->next;
+	memcpy(temp->ent, item, sizeof(_ITEM));
+	item->itemType = ITEM_NONE;
+}
+
+void spawnCreature(ENTP list, CREATURESTATS *creature, UINT level, UINT y, UINT x){
 	if(creature == NULL) return;
-	ENTITY *e = list;
+	ENTP e = list;
 	int slotCount = 0;
 	size_t i;
 	for(i = 0; i < 7; i++){
@@ -403,14 +428,14 @@ void spawnCreature(ENTITY *list, CREATURESTATS *creature, unsigned int level, un
 	}
 	size_t s = sizeof(ENTITY) + sizeof(CREATURE) + (sizeof(_ITEM) * slotCount);
 	if(list == NULL){
-		e = (ENTITY *)calloc(1, s);
+		e = (ENTP)calloc(1, s);
 		if(e == NULL) return;
 		ENTROOT = e;
 //		list = e;
 	}
 	else{
 		while(e->next != NULL) e = e->next;
-		e->next = (ENTITY *)calloc(1, s);
+		e->next = (ENTP)calloc(1, s);
 		if(e->next == NULL) return;
 		e = e->next;
 	}
@@ -428,21 +453,21 @@ void spawnCreature(ENTITY *list, CREATURESTATS *creature, unsigned int level, un
 	e->flags = creature->flags;
 	e->locY = y;
 	e->locX = x;
-	setCreatureStats( (CREATURE *)e->ent, creature, genesis->floor);
+	setCreatureStats( (CREP)e->ent, creature, genesis->floor);
 }
 
-void spawnItem(ENTITY *list, _ITEMSTATS *item, unsigned int level, unsigned int y, unsigned int x){
+void spawnItem(ENTP list, _ITEMSTATS *item, UINT level, UINT y, UINT x){
 	if(item == NULL) return;
-	ENTITY *e = list;
+	ENTP e = list;
 	size_t s = sizeof(ENTITY) + sizeof(_ITEM);
 	if(list == NULL){
-		e = (ENTITY *)calloc(1,s);
+		e = (ENTP)calloc(1,s);
 		if(e == NULL) return;
 		list = e;
 	}
 	else{
 		while(e->next != NULL) e = e->next;
-		e->next = (ENTITY *)calloc(1,s);
+		e->next = (ENTP)calloc(1,s);
 		if(e->next == NULL) return;
 		e = e->next;
 	}
@@ -451,7 +476,7 @@ void spawnItem(ENTITY *list, _ITEMSTATS *item, unsigned int level, unsigned int 
 		e = NULL;
 		return;
 	}
-	_ITEM *temp = (_ITEM *)e->ent;
+	ITEMP temp = (ITEMP)e->ent;
 	memcpy(&temp->itemName, &item->itemName, sizeof(temp->itemName));
 	memcpy(&temp->itemSize, &item->itemSize, sizeof(temp->itemSize));
 	memcpy(&temp->itemType, &item->itemType, sizeof(temp->itemType));
@@ -469,18 +494,18 @@ void spawnItem(ENTITY *list, _ITEMSTATS *item, unsigned int level, unsigned int 
 	e->locX = x;
 }
 
-void spawnObject(ENTITY *list, OBJECTSTATS *object, unsigned int level, unsigned int y, unsigned int x){
+void spawnObject(ENTP list, OBJECTSTATS *object, UINT level, UINT y, UINT x){
 	if(object == NULL) return;
-	ENTITY *e = list;
+	ENTP e = list;
 	size_t s = sizeof(ENTITY) + sizeof(OBJECT);
 	if(list == NULL){
-		e = (ENTITY *)calloc(1, s);
+		e = (ENTP)calloc(1, s);
 		if(e == NULL) return;
 		list = e;
 	}
 	else{
 		while(e->next != NULL) e = e->next;
-		e->next = (ENTITY *)calloc(1, s);
+		e->next = (ENTP)calloc(1, s);
 		if(e->next == NULL) return;
 		e = e->next;
 	}
@@ -497,8 +522,8 @@ void spawnObject(ENTITY *list, OBJECTSTATS *object, unsigned int level, unsigned
 	e->flags = object->flags;
 	e->locY = y;
 	e->locX = x;
-	setObjectStats( (OBJECT *)e->ent, object);
-	( ((OBJECT *)e->ent)->isOpen ) ? (e->ch = object->chOpen) : (e->ch = object->chClosed);
+	setObjectStats( (OBJP)e->ent, object);
+	( ((OBJP)e->ent)->isOpen ) ? (e->ch = object->chOpen) : (e->ch = object->chClosed);
 }
 
 void TEST_seedItem(){

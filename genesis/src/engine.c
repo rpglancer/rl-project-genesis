@@ -196,13 +196,17 @@ void engineInput(){
 			selectObject(MSG_CLOSE);
 			break;
 		case 'd':
-			displayInventory((CREATURE *)player->ent);
+			pushMsg(player, NULL, MSG_DROP, selectItem( (CREATURE *)player->ent));
+			// Select item to drop
 			break;
 		case 'e':
 //			displayEq();
 			break;
 		case 'g':
 			selectObject(MSG_GET);
+			break;
+		case 'i':
+			displayInventory((CREATURE *)player->ent);
 			break;
 		case 'l':
 			loadCurrent();
@@ -368,6 +372,11 @@ int engineUpdate(){
 				if(MSGCURRENT->target){
 					MSGCURRENT->target->ent = NULL;
 					delEnt(MSGCURRENT->target);
+				}
+				break;
+			case MSG_DROP:
+				if( ((CREATURE *)player->ent)->inventory[MSGCURRENT->msgFlag].itemType != ITEM_NONE  ){
+					moveItem( &((CREATURE *)player->ent)->inventory[MSGCURRENT->msgFlag]  );
 				}
 				break;
 			case MSG_OPEN:

@@ -59,6 +59,14 @@ _ITEMSTATS *loadItem(LL *list){
 	return item;
 }
 
+_ITEMSTATS *seekItem(_ITEM *item){
+	_ITEMSTATS *list = ITEMLIST;
+	for(list; list != NULL; list = list->next){
+		if(!strcmp(list->itemName, item->itemName)) return list;
+	}
+	return NULL;
+}
+
 void delItem(_ITEM *item){
 	if(item == NULL) return;
 	free(item);

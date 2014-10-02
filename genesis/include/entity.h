@@ -9,14 +9,14 @@
 
 /*		Trap structure			*/
 typedef struct TRAP{
-	unsigned int level;		// The level of the trap
-	unsigned int quality;		// The quality of the trap
-	unsigned int traptype;		// The type of trap ie: spike, fire etc.
+	UINT level;		// The level of the trap
+	UINT quality;		// The quality of the trap
+	UINT traptype;		// The type of trap ie: spike, fire etc.
 }TRAP;
 
 /*		Entity structure		*/
 typedef struct ENTITY{
-	unsigned int category;		// The category of this entity
+	UINT category;		// The category of this entity
 	char name[15];			// Name of entity
 	char shortDesc[25];		// Short description of entity
 	char longDesc[50];		// Long description of entity
@@ -30,19 +30,16 @@ typedef struct ENTITY{
 }ENTITY;
 
 /*		Global entity pointers		*/
-ENTITY *ENTCURRENT;
-ENTITY *ENTROOT;
-ENTITY *player;
+ENTP ENTCURRENT;
+ENTP ENTROOT;
+ENTP player;
 
-ENTITY *delEntList(ENTITY *entity);
-//ENTITY *spawnCreature(ENTITY *list, CREATURESTATS *creature, unsigned int level, unsigned int y, unsigned int x);
-//ENTITY *spawnObject(ENTITY *list, OBJECTSTATS *object, unsigned int level, unsigned int y, unsigned int x);
-ENTITY *seekEntity(ENTITY *entity);
+ENTP delEntList(ENTP entity);
+ENTP seekEntity(ENTP entity);
 
-
-bool canHear(ENTITY *src, ENTITY *tgt);
-bool checkFlag(ENTITY *, int flag);
-bool seedCreature(int level, unsigned int ft);
+bool canHear(ENTP src, ENTP tgt);
+bool checkFlag(ENTP, int);
+bool seedCreature(int level, UINT ft);
 bool seedFurniture(int level);
 bool seedTraps(int level);
 bool seedTreasure(int level);
@@ -51,18 +48,21 @@ int initEnt();
 
 unsigned int countEnt();
 
-void addFlag(ENTITY *e, int flag);
-void delEnt(ENTITY *entity);
-void delFlag(ENTITY *e, int flag);
-void doClose(ENTITY *entity);
-void doOpen(ENTITY *entity);
+
+void addEntity(ENTP list, UINT category);
+void addFlag(ENTP e, int flag);
+void delEnt(ENTP entity);
+void delFlag(ENTP e, int flag);
+void doClose(ENTP entity);
+void doOpen(ENTP entity);
 void drawEnt();
-void setClass(ENTITY *entity);
-void setName(ENTITY *entity);
-void setRace(ENTITY *entity);
-void spawnCreature(ENTITY *list, CREATURESTATS *creature, unsigned int level, unsigned int y, unsigned int x);
-void spawnItem(ENTITY *list, _ITEMSTATS *item, unsigned int level, unsigned int y, unsigned int x);
-void spawnObject(ENTITY *list, OBJECTSTATS *object, unsigned int level, unsigned int y, unsigned int x);
+void moveItem(ITEMP item);
+void setClass(ENTP entity);
+void setName(ENTP entity);
+void setRace(ENTP *entity);
+void spawnCreature(ENTP list, CREATURESTATS *creature, UINT level, UINT y, UINT x);
+void spawnItem(ENTP list, _ITEMSTATS *item, UINT level, UINT y, UINT x);
+void spawnObject(ENTP list, OBJECTSTATS *object, UINT level, UINT y, UINT x);
 void TEST_seedItem();
 
 #endif

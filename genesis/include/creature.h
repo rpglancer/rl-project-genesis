@@ -18,7 +18,7 @@ typedef struct CLASSSTATS{
 }CLASSSTATS;
 
 typedef struct CREATURE{
-        unsigned int class, level;              // Should probably have entity keep track of level
+        UINT class, level;              // Should probably have entity keep track of level
         int hp, hpMax;                          // Current HP / Maximum HP
         int mp, mpMax;                          // Current MP / Maximum MP
         int ap, apMax;                          // Current AP / Maximum AP
@@ -34,8 +34,8 @@ typedef struct CREATURE{
 /*      CREATURESTATS structure         */
 typedef struct CREATURESTATS{
         char name[15], shortDesc[25], longDesc[50], ch;         // Name, description and ASCII representation
-        unsigned int class, color, flags;                       // Class, color and flags
-        unsigned int dLevelMin, dLevelMax;                      // Minimum and maximum dungeon level
+        UINT class, color, flags;                       // Class, color and flags
+        UINT dLevelMin, dLevelMax;                      // Minimum and maximum dungeon level
         int hpMin, hpMax;                                       // Minimum and maximum HP
         int mpMin, mpMax;                                       // Minimum and maximum MP
         int apMin, apMax;                                       // Minimum and maximum AP
@@ -62,13 +62,16 @@ CREATURESTATS *addCreature(CREATURESTATS *list);	// Allocate memory for a new cr
 CREATURESTATS *delCreatureList(CREATURESTATS *list);	// Delete all available creatures
 CREATURESTATS *loadCreature(LL *list);			// Load creature file into memory
 
-size_t getClassCount(CLASSSTATS *list);
+_ITEM *dropItem(CREP creature, _ITEM *item);
 
-void displayInventory(CREATURE *creature);
-void delCreature(CREATURE *creature);
-void dropItem(CREATURE *creature, _ITEM *item);
-void getItem(CREATURE *creature, _ITEM *item);
-void manageEq(CREATURE *creature, unsigned int slot);
-void setCreatureStats(CREATURE *creature, CREATURESTATS *stats, int level);
+size_t getClassCount(CLASSSTATS *list);
+size_t selectItem(CREP creature);
+
+void displayInventory(CREP creature);
+void delCreature(CREP creature);
+//void dropItem(CREATURE *creature, _ITEM *item);
+void getItem(CREP creature, ITEMP item);
+void manageEq(CREP creature, UINT slot);
+void setCreatureStats(CREP creature, CREATURESTATS *stats, int level);
 
 #endif

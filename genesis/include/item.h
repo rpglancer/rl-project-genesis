@@ -52,6 +52,7 @@ _ITEM *newItem();
 _ITEMSTATS *addItem(_ITEMSTATS *list);
 _ITEMSTATS *delItemList(_ITEMSTATS *list);
 _ITEMSTATS *loadItem(LL *list);
+_ITEMSTATS *seekItem(_ITEM *name);
 
 EQUIPMENT *addSlot(EQUIPMENT *list, int slotType);
 
