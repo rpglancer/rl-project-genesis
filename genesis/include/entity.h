@@ -44,13 +44,16 @@ int initEnt();
 unsigned int countEnt();
 
 
-void addEntity(ENTP list, UINT category);
+//void addEntity(ENTP list, UINT category);
+void addEnt(ENTP list, uint category, uint y, uint x);
 void addFlag(ENTP e, int flag);
 void delEnt(ENTP entity);
 void delFlag(ENTP e, int flag);
 void doClose(ENTP entity);
 void doOpen(ENTP entity);
 void drawEnt();
+void dropItem(ENTP entity, ITEMP item);
+void getItem(ENTP entity, ENTP item);
 void setClass(ENTP entity);
 void setName(ENTP entity);
 void setRace(ENTP *entity);

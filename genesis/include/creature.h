@@ -68,14 +68,16 @@ CREATURESTATS *addCreature(CREATURESTATS *list);	// Allocate memory for a new cr
 CREATURESTATS *delCreatureList(CREATURESTATS *list);	// Delete all available creatures
 CREATURESTATS *loadCreature(LL *list);			// Load creature file into memory
 
-_ITEM *dropItem(CREP creature, _ITEM *item);
+//_ITEM *dropItem(CREP creature, _ITEM *item);
+
+bool inventoryFull(CREP creature);
 
 size_t getClassCount(CLASSSTATS *list);
 size_t selectItem(CREP creature);
 
 void displayInventory(CREP creature);
 void delCreature(CREP creature);
-void getItem(CREP creature, ITEMP item);
+//void getItem(CREP creature, ITEMP item);
 void manageEq(CREP creature, UINT slot);
 void setCreatureStats(CREP creature, CREATURESTATS *stats, int level);
 

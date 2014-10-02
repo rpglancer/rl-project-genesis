@@ -365,13 +365,15 @@ int engineUpdate(){
 				}
 				break;
 			case MSG_GET:
-				getItem( (CREATURE *)MSGCURRENT->source->ent , (_ITEM *)MSGCURRENT->target->ent);
-				if(MSGCURRENT->target){
-					MSGCURRENT->target->ent = NULL;
-					delEnt(MSGCURRENT->target);
-				}
+				getItem( MSGCURRENT->source, MSGCURRENT->target);
+		//		getItem( (CREATURE *)MSGCURRENT->source->ent , (_ITEM *)MSGCURRENT->target->ent);
+		//		if(MSGCURRENT->target){
+		//			MSGCURRENT->target->ent = NULL;
+		//			delEnt(MSGCURRENT->target);
+		//		}
 				break;
 			case MSG_DROP:
+				dropItem(MSGCURRENT->source, &((CREP)MSGCURRENT->source->ent)->inventory[MSGCURRENT->msgFlag]);
 				break;
 			case MSG_OPEN:
 				doOpen(seekEntity(MSGCURRENT->target));

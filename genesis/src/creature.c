@@ -149,6 +149,15 @@ CREATURESTATS *loadCreature(LL *list){
 	return creature;
 }
 
+bool inventoryFull(CREP creature){
+	if(creature == NULL) return true;
+	size_t i;
+	for(i = 0; i < 10; i++){
+		if(creature->inventory[i].itemType == ITEM_NONE) return false;
+	}
+	return true;
+}
+
 size_t getClassCount(CLASSSTATS *list){
 	if(list == NULL) return 0;
 	CLASSSTATS *c = list;
@@ -195,6 +204,7 @@ void displayInventory(CREP creature){
 	refresh();
 	return;
 }
+/*
 ITEMP dropItem(CREP creature, ITEMP item){
 	if(creature == NULL || item == NULL) return;
 	size_t i;
@@ -206,7 +216,7 @@ ITEMP dropItem(CREP creature, ITEMP item){
 		}
 	}
 }
-
+*/
 size_t selectItem(CREP creature){
 	if(creature == NULL) return -1;
 	int cursY = 1;
@@ -241,6 +251,7 @@ size_t selectItem(CREP creature){
 	}
 }
 
+/*
 void getItem(CREP creature, ITEMP item){
 	if(creature == NULL || item == NULL) return;
 	size_t i;
@@ -252,6 +263,7 @@ void getItem(CREP creature, ITEMP item){
 	}
 //	creature->inventory[i] = *item;
 }
+*/
 
 void manageEq(CREP creature, UINT slot){
 	return;

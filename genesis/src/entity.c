@@ -173,6 +173,7 @@ ENTITY *delEntList(ENTP entity){
 	return entity;
 }
 
+/*	Draw entities to screen		*/
 void drawEnt(){
 	for(ENTCURRENT = ENTROOT; ENTCURRENT != NULL; ENTCURRENT = ENTCURRENT->next){
 		if(ENTCURRENT->locY - VIEW->y + WINSTARTY >= WINSTARTY){
@@ -198,25 +199,6 @@ void drawEnt(){
 		}
 	}
 }
-
-/*	Draw entities to screen		*/
-/*
-void drawEnt(){
-	ENTCURRENT = ENTROOT;
-	for(ENTCURRENT; ENTCURRENT != NULL; ENTCURRENT = ENTCURRENT->next){
-		if(ENTCURRENT->locY - VIEW->y + WINSTARTY >= WINSTARTY){
-			attron(COLOR_PAIR(ENTCURRENT->color));
-			mvaddch(ENTCURRENT->locY - VIEW->y + WINSTARTY, ENTCURRENT->locX - VIEW->x, ENTCURRENT->ch);
-			attroff(COLOR_PAIR(ENTCURRENT->color));
-		}
-	}
-//	Draw the player last, lest he end up beneath other entities.
-	if(ENTROOT->locY - VIEW->y + WINSTARTY >= WINSTARTY){
-		attron(COLOR_PAIR(player->color));
-		mvaddch(player->locY - VIEW->y + WINSTARTY, player->locX - VIEW->x, player->ch);
-		attroff(COLOR_PAIR(player->color));
-	}
-}*/
 
 int calcStatMod(int stat){
 	int mod = -5;
@@ -287,6 +269,40 @@ void doOpen(ENTP entity){
 		default:
 			break;
 	}
+}
+
+void dropItem(ENTP entity, ITEMP item){
+	if(entity == NULL || item == NULL) return;
+	if(entity->category != C_CREATURE) return;
+	CREP c = (CREP)entity->ent;
+	size_t slot;
+	for(slot = 0; slot < 10; slot++){
+		if(&c->inventory[slot] == item) break;
+	}
+	addEnt(ENTROOT, C_ITEM, entity->locY, entity->locX);
+	ENTCURRENT = ENTROOT;
+	while(ENTCURRENT->next != NULL) ENTCURRENT = ENTCURRENT->next;
+	ENTCURRENT->ent = newItem();
+	ITEMP i = (ITEMP)ENTCURRENT->ent;
+	memcpy(i, item, sizeof(_ITEM));
+	c->inventory[slot].itemType = ITEM_NONE;
+	return;
+}
+
+void getItem(ENTP entity, ENTP item){
+	if(entity == NULL || item == NULL) return;
+	if(entity->category != C_CREATURE || item->category != C_ITEM)return;
+	CREP c = (CREP)entity->ent;
+	ITEMP i = (ITEMP)item->ent;
+	if(inventoryFull(c)) return;
+	size_t slot;
+	for(slot = 0; slot < 10; slot++){
+		if(c->inventory[slot].itemType == ITEM_NONE) break;
+	}
+	memcpy(&c->inventory[slot], i, sizeof(_ITEM));
+	i = NULL;
+	delEnt(item);
+	return;
 }
 
 void rollStats(CREP creature){
@@ -473,14 +489,17 @@ void addEnt(ENTP list, UINT category, UINT y, UINT x){
 	while(e->next != NULL) e = e->next;
 	switch(category){
 		case C_ITEM:
-			e->category = category;
 			e->next = (ENTP)calloc(1, sizeof(ENTITY) + sizeof(_ITEM));
+			if(e->next == NULL) return;
 			break;
 		default:
-			e->category = category;
 			e->next = (ENTP)calloc(1, sizeof(ENTITY));
+			if(e->next == NULL) return;
 			break;
 	}
+	e->next->category = category;
+	e->next->locY = y;
+	e->next->locX = x;
 }
 
 void spawnCreature(ENTP list, CREATURESTATS *creature, UINT level, UINT y, UINT x){
@@ -515,14 +534,6 @@ void spawnCreature(ENTP list, CREATURESTATS *creature, UINT level, UINT y, UINT 
 	memcpy( ((CREP)e->ent)->name, creature->name, sizeof(((CREP)e->ent)->name));
 	memcpy( ((CREP)e->ent)->shortDesc, creature->shortDesc, sizeof(((CREP)e->ent)->shortDesc));
 	memcpy( ((CREP)e->ent)->longDesc, creature->longDesc, sizeof(((CREP)e->ent)->longDesc));
-/*	Legacy	*/
-//	memcpy(e->name, creature->name, sizeof(e->name));
-//	memcpy(e->shortDesc, creature->shortDesc, sizeof(e->shortDesc));
-//	memcpy(e->longDesc, creature->longDesc, sizeof(e->longDesc));
-//	e->ch = creature->ch;
-//	e->color = creature->color;
-//	e->flags = creature->flags;
-/*	/Legacy	*/
 	((CREP)e->ent)->ch = creature->ch;
 	((CREP)e->ent)->color = creature->color;
 	((CREP)e->ent)->flags = creature->flags;
@@ -552,6 +563,7 @@ void spawnItem(ENTP list, _ITEMSTATS *item, UINT level, UINT y, UINT x){
 	}
 	e->locY = y;
 	e->locX = x;
+	e->category = C_ITEM;
 	ITEMP temp = (ITEMP)e->ent;
 	memcpy(&temp->name, &item->itemName, sizeof(temp->itemName));
 	memcpy(&temp->itemName, &item->itemName, sizeof(temp->itemName));
@@ -567,10 +579,6 @@ void spawnItem(ENTP list, _ITEMSTATS *item, UINT level, UINT y, UINT x){
 	memcpy(&temp->itemDmgMod, &item->itemDmgMod, sizeof(temp->itemDmgMod));
 	temp->ch = item->ch;
 	temp->color = 2;
-//	e->ch = item->ch;
-//	e->color = 2;
-//	((ITEMP)e->ent)->ch = item->ch;
-//	((ITEMP)e->ent)->color = item->color;
 }
 
 void spawnObject(ENTP list, OBJECTSTATS *object, UINT level, UINT y, UINT x){
@@ -603,14 +611,6 @@ void spawnObject(ENTP list, OBJECTSTATS *object, UINT level, UINT y, UINT x){
 	o->chClosed = object->chClosed;
 	setObjectStats(o, object);
 	(o->isOpen) ? (o->ch = o->chOpen) : (o->ch = o->chClosed);
-//	memcpy(e->name, object->name, sizeof(e->name));
-//	memcpy(e->shortDesc, object->shortDesc, sizeof(e->shortDesc));
-//	memcpy(e->longDesc, object->longDesc, sizeof(e->longDesc));
-//	e->color = object->color;
-//	e->flags = object->flags;
-//	setObjectStats( (OBJP)e->ent, object);
-//	( ((OBJP)e->ent)->isOpen ) ? (((OBJP)e->ent)->ch = object->chOpen) : (((OBJP)e->ent)->ch = object->chClosed);
-//	( ((OBJP)e->ent)->isOpen ) ? (e->ch = object->chOpen) : (e->ch = object->chClosed);
 }
 
 void TEST_seedItem(){
