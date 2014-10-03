@@ -28,6 +28,7 @@ bool checkMove(ENTP entity, uint dir);
 bool checkObject(ENTP entity, uint dir);
 bool checkTile(ENTP entity, uint dir);
 
+void displayInventory(CREP creature);
 void doCombat(CREP, CREP);
 void drawCoords();			// Test function for printing certain coordinates
 void drawHeader();			// Draw relevant information at the top of the screen
@@ -38,6 +39,7 @@ void newPlayer();
 void quickAI();				// Crude AI processing
 void setColors();
 
+int contextMenu(ITEMP item, uint y, uint x);
 int engineRun();			// Run the engine
 int engineUpdate();			// Update everything involved with the engine
 int initEngine();			// Initialize the engine

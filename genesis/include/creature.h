@@ -73,7 +73,7 @@ bool inventoryFull(CREP creature);
 size_t getClassCount(CLASSSTATS *list);
 size_t selectItem(CREP creature);
 
-void displayInventory(CREP creature);
+//void displayInventory(CREP creature);
 void delCreature(CREP creature);
 void equipItem(CREP creature, ITEMP item);
 void manageEq(CREP creature, UINT slot);

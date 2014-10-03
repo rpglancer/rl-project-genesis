@@ -174,7 +174,7 @@ void delCreature(CREP creature){
 	free(creature);
 	creature = NULL;
 }
-
+/*
 void displayInventory(CREP creature){
 	char select = '>';
 	int cursY = 1;
@@ -204,7 +204,7 @@ void displayInventory(CREP creature){
 	refresh();
 	return;
 }
-
+*/
 void equipItem(CREP creature, ITEMP item){
 	if(creature == NULL || item == NULL) return;
 	EQUIPMENT *eq = NULL;

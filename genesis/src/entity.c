@@ -76,8 +76,7 @@ bool checkFlag(ENTP e, int flag){
 			eFlag = ((OBJP)e->ent)->flags;
 			break;
 		default:
-			eFlag = 0;
-			break;
+			return false;
 	}
 	if(flag > eFlag) return false;
 	if(flag == eFlag) return true;
@@ -88,21 +87,6 @@ bool checkFlag(ENTP e, int flag){
 	}
 	if(eFlag - flag == 0) return true;
 	return false;
-//	if(flag > e->flags) return false;
-//	if(flag == e->flags) return true;
-//	int i = ARRAYSIZE(FLAG_ARRAY) - 1;
-//	int check = e->flags;
-//	while(i >= 0){
-//		if(flag == FLAG_ARRAY[i]){
-//			i--;
-//		}
-//		else{
-//			check -= FLAG_ARRAY[i];
-//			i--;
-//		}
-//	}
-//	if(check - flag == 0) return true;
-//	return false;
 }
 
 bool canHear(ENTP src, ENTP tgt){
@@ -241,9 +225,7 @@ void displayClass(int class){
 
 void doClose(ENTP entity){
 	if(entity == NULL || entity->ent == NULL || entity->category != C_OBJECT) return;
-//	OBJECTSTATS *stats = seekObject(OBJECTLIST, entity->name);
 	OBJP object = (OBJP)entity->ent;
-//	entity->ch = stats->chClosed;
 	object->ch = object->chClosed;
 	object->isOpen = false;
 	switch(object->type){
@@ -257,9 +239,7 @@ void doClose(ENTP entity){
 
 void doOpen(ENTP entity){
 	if(entity == NULL || entity->ent == NULL || entity->category != C_OBJECT) return;
-//	OBJECTSTATS *stats = seekObject(OBJECTLIST, entity->name);
 	OBJP object = (OBJP)entity->ent;
-//	entity->ch = stats->chOpen;
 	object->ch = object->chOpen;
 	object->isOpen = true;
 	switch(object->type){
@@ -300,7 +280,6 @@ void getItem(ENTP entity, ENTP item){
 		if(c->inventory[slot].itemType == ITEM_NONE) break;
 	}
 	memcpy(&c->inventory[slot], i, sizeof(_ITEM));
-//	i = NULL;
 	delEnt(item);
 	return;
 }
@@ -433,8 +412,6 @@ void setName(ENTP entity){
 		CREP p = (CREP)player->ent;
 		replaceAll(p->name, ARRAYSIZE(p->name));
 		strcpy(p->name, eName);
-//		replaceAll(player->name, sizeof(player->name) / sizeof(player->name[0]));
-//		strcpy(player->name, eName);
 		nameOK = true;
 	}
 }

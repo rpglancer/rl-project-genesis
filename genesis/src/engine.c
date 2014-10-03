@@ -142,6 +142,48 @@ int getDmg(CREATURE *src, CREATURE *tgt){
 	return dmg;
 }
 
+void displayInventory(CREP creature){
+	if(creature == NULL) return;
+	char select = '>';
+	int cursY = 1;
+	int cursX = 0;
+	int action = ACTION_NONE;
+	bool invOK = false;
+	WINDOW *inventory = newWindow(10, 20, MAXHEIGHT/2, MAXWIDTH/2);
+	while(!invOK){
+		wclear(inventory);
+		mvwprintw(inventory, 0, 10, "-- Inventory --");
+		size_t i;
+		int y;
+		for(i = 0, y = 1; i < 10; i++, y++){
+			if(creature->inventory[i].itemType != ITEM_NONE) mvwprintw(inventory, y, 1, "%s", creature->inventory[i].name);
+			else mvwprintw(inventory, y, 1, "[None]");
+		}
+		mvwaddch(inventory, cursY, cursX, select);
+		wrefresh(inventory);
+		switch(getch()){
+			case '\n':
+				action = contextMenu(&creature->inventory[cursY - 1], getbegy(inventory) + cursY, getbegx(inventory) + 10);
+				if(action != ACTION_NONE) invOK = true;
+				break;
+			case 'i':
+				invOK = true;
+				break;
+			case KEY_DOWN:
+				if(cursY < 10) ++cursY;
+				break;
+			case KEY_UP:
+				if(cursY > 1) --cursY;
+				break;
+			default:
+				break;
+		}
+	}
+	if(action == ACTION_EQUIP) equipItem(creature, &creature->inventory[cursY - 1]);
+	delWindow(inventory);
+	refresh();
+}
+
 void doCombat(CREATURE *src, CREATURE *tgt){
 	switch(didHit(src, tgt)){
 		case CRIT:
@@ -308,6 +350,40 @@ void quickAI(){
 		}
 	}
 	return;
+}
+
+int contextMenu(ITEMP item, uint y, uint x){
+	if(item == NULL || item->itemType == ITEM_NONE) return ACTION_NONE;
+	char select = '>';
+	int cursY = 1;
+	int cursX = 0;
+	bool contextOK = false;
+	WINDOW *context = newWindow(y, x, 7, 8);
+	while(!contextOK){
+		wclear(context);
+		mvwprintw(context, 0, 1, "ACTION:");
+		mvwprintw(context, 1, 1, "none");
+		mvwprintw(context, 2, 1, "move");
+		mvwprintw(context, 3, 1, "equip");
+		mvwprintw(context, 4, 1, "drop");
+		mvwprintw(context, 5, 1, "exam");
+		mvwprintw(context, 6, 1, "use");
+		mvwaddch(context, cursY, cursX, select);
+		wrefresh(context);
+		switch(getch()){
+			case KEY_DOWN:
+				if(cursY < 6) ++cursY;
+				break;
+			case KEY_UP:
+				if(cursY > 1) --cursY;
+				break;
+			case '\n':
+				delWindow(context);
+				return cursY - 1;
+			default:
+				break;
+		}
+	}
 }
 
 int engineRun(){

@@ -122,6 +122,15 @@ enum ENGINESTATE{
 	ENGINETITLE = 2,
 };
 
+enum CONTEXT_ACTIONS{
+	ACTION_NONE = 0,
+	ACTION_MOVE = 1,
+	ACTION_EQUIP = 2,
+	ACTION_DROP = 3,
+	ACTION_EXAM = 4,
+	ACTION_USE = 5,
+};
+
 enum ERRORS{
 	ERR_NONE = 0,		// No errors
 	ERR_MALLOC = -1,	// Memory allocation error
@@ -136,7 +145,7 @@ enum FLAG_TYPES{
 	FLAG_ISMOBILE = 4,	// Entity is mobile
 	FLAG_ISAGGRESSIVE = 8,
 };
-/*
+
 enum WEAR_FLAGS{
 	WEAR_HEAD = 0,
 	WEAR_BODY = 1,
@@ -146,7 +155,7 @@ enum WEAR_FLAGS{
 	WEAR_LEGS = 5,
 	WEAR_FEET = 6,
 };
-*/
+/*
 enum WEAR_FLAGS{
 	WEAR_HEAD = 1,
 	WEAR_BODY = 2,
@@ -156,7 +165,7 @@ enum WEAR_FLAGS{
 	WEAR_LEGS = 32,
 	WEAR_FEET = 64,
 };
-
+*/
 enum WEAR_SIZES{
 	SIZE_ALL = 0,
 	SIZE_HUGE = 1,
