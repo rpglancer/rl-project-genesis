@@ -204,21 +204,49 @@ void displayInventory(CREP creature){
 	refresh();
 	return;
 }
-/*
-ITEMP dropItem(CREP creature, ITEMP item){
+
+void equipItem(CREP creature, ITEMP item){
 	if(creature == NULL || item == NULL) return;
-	size_t i;
-	for(i = 0; i < 10; i++){
-		if(&creature->inventory[i] == item){
-			ITEMP drop = item;
-			creature->inventory[i].itemType = ITEM_NONE;
-			return drop;
-		}
+	EQUIPMENT *eq = NULL;
+	switch(item->itemWearFlags){
+		case WEAR_HEAD:
+			eq = &creature->equipment[0];
+			break;
+		case WEAR_BODY:
+			eq = &creature->equipment[1];
+			break;
+		case WEAR_WIELD_L:
+			eq = &creature->equipment[2];
+			break;
+		case WEAR_WIELD_R:
+			eq = &creature->equipment[3];
+			break;
+		case WEAR_HANDS:
+			eq = &creature->equipment[4];
+			break;
+		case WEAR_LEGS:
+			eq = &creature->equipment[5];
+			break;
+		case WEAR_FEET:
+			eq = &creature->equipment[6];
+			break;
+		default:
+			return;
+	}
+	if(eq->item == NULL){
+		eq->item = (ITEMP)malloc(sizeof(_ITEM));
+		memcpy(eq->item, item, sizeof(_ITEM));
+		item->itemType = ITEM_NONE;
+	}
+	else{
+		ITEMP temp = eq->item;
+		memcpy(eq->item, item, sizeof(_ITEM));
+		memcpy(item, temp, sizeof(_ITEM));
 	}
 }
-*/
+
 size_t selectItem(CREP creature){
-	if(creature == NULL) return -1;
+	if(creature == NULL) return -1;		// size_t is unsigned, dummy
 	int cursY = 1;
 	int cursX = 0;
 	char select = '>';
@@ -250,20 +278,6 @@ size_t selectItem(CREP creature){
 		}
 	}
 }
-
-/*
-void getItem(CREP creature, ITEMP item){
-	if(creature == NULL || item == NULL) return;
-	size_t i;
-	for(i = 0; i < 10; i++){
-		if(creature->inventory[i].itemType == ITEM_NONE){
-			creature->inventory[i] = *item;
-			break;
-		}
-	}
-//	creature->inventory[i] = *item;
-}
-*/
 
 void manageEq(CREP creature, UINT slot){
 	return;

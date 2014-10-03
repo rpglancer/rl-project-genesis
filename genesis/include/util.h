@@ -31,6 +31,8 @@ int getMinLevel(int level);
 int getMaxLevel(int level);
 int getRand_i(int min, int max);
 
+size_t getSlot(uint wearFlag);
+
 void logEntry(char *text);
 void replaceAll(char *text, size_t count);
 void replaceChar(char *text, size_t count, char toReplace, char withChar);

@@ -144,15 +144,15 @@ int pushHistory(ENTITY *source, ENTITY *target, int msgType, int msgFlag){
 		switch(target->category){
 			case C_CREATURE:
 				t = ((CREP)target->ent);
-				strncpy(tName, ((CREP)source->ent)->name, sizeof(((CREP)source->ent)->name));
+				strncpy(tName, ((CREP)target->ent)->name, sizeof(((CREP)target->ent)->name));
 				break;
 			case C_ITEM:
 				t = ((ITEMP)target->ent);
-				strncpy(tName, ((ITEMP)source->ent)->name, sizeof(((ITEMP)source->ent)->name));
+				strncpy(tName, ((ITEMP)target->ent)->name, sizeof(((ITEMP)target->ent)->name));
 				break;
 			case C_OBJECT:
 				t = ((OBJP)target->ent);
-				strncpy(tName, ((OBJP)source->ent)->name, sizeof(((OBJP)source->ent)->name));
+				strncpy(tName, ((OBJP)target->ent)->name, sizeof(((OBJP)target->ent)->name));
 				break;
 			default:
 				t = target->ent;

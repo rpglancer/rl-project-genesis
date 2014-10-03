@@ -4,6 +4,7 @@
 
 bool checkCombat(ENTITY *src, unsigned int dir){
 	for(ENTCURRENT = ENTROOT; ENTCURRENT != NULL; ENTCURRENT = ENTCURRENT->next){
+		if(ENTCURRENT == src) continue;
 		if(src->category == C_CREATURE && ENTCURRENT->category == C_CREATURE){
 			if(src->locX == ENTCURRENT->locX - 1 &&
 			src->locY == ENTCURRENT->locY &&
@@ -123,15 +124,6 @@ int didHit(CREATURE *src, CREATURE *tgt){
 
 int getDmg(CREATURE *src, CREATURE *tgt){
 	int dmg = 0;
-/*
-	EQUIPMENT *eq = src->equipment;
-	while(eq != NULL){
-		if(eq->slot == WEAR_WIELD_R){
-			if(eq->item != NULL) break;
-		}
-		eq = eq->next;
-	}
-*/
 	EQUIPMENT *eq = NULL;
 	size_t i;
 	for(i = 0; i < 7; i++){
@@ -206,9 +198,7 @@ void engineInput(){
 			displayInventory((CREATURE *)player->ent);
 			break;
 		case 'l':
-//			loadCurrent();
-//			refresh();
-//			engineInput();
+			// Load
 			break;
 		case 'o':
 			selectObject(MSG_OPEN);
@@ -217,8 +207,7 @@ void engineInput(){
 			genesis->engineStatus = ENGINESTOP;
 			break;
 		case 's':
-//			saveCurrent();
-//			engineInput();
+			// Save
 			break;
 		case KEY_LEFT:
 			if(checkCombat(player, DIR_WEST)){
@@ -366,30 +355,15 @@ int engineUpdate(){
 				break;
 			case MSG_GET:
 				getItem( MSGCURRENT->source, MSGCURRENT->target);
-		//		getItem( (CREATURE *)MSGCURRENT->source->ent , (_ITEM *)MSGCURRENT->target->ent);
-		//		if(MSGCURRENT->target){
-		//			MSGCURRENT->target->ent = NULL;
-		//			delEnt(MSGCURRENT->target);
-		//		}
 				break;
 			case MSG_DROP:
 				dropItem(MSGCURRENT->source, &((CREP)MSGCURRENT->source->ent)->inventory[MSGCURRENT->msgFlag]);
 				break;
 			case MSG_OPEN:
 				doOpen(seekEntity(MSGCURRENT->target));
-				//ENTCURRENT = seekEntity(MSGCURRENT->target);
-				//if(ENTCURRENT != NULL){
-				//	pushHistory(MSGCURRENT->source, MSGCURRENT->target, MSGCURRENT->msgType, MSGCURRENT->msgFlag);
-				//	ENTCURRENT = doOpen(ENTCURRENT);
-				//}
 				break;
 			case MSG_CLOSE:
 				doClose(seekEntity(MSGCURRENT->target));
-				//ENTCURRENT = seekEntity(MSGCURRENT->target);
-				//if(ENTCURRENT != NULL){
-				//	pushHistory(MSGCURRENT->source, MSGCURRENT->target, MSGCURRENT->msgType, MSGCURRENT->msgFlag);
-				//	ENTCURRENT = doClose(ENTCURRENT);
-				//}
 				break;
 			default:
 				break;
@@ -519,7 +493,6 @@ void loadCurrent(){
 		fread(ENTROOT->ent, sizeof(CREATURE), 1, f);
 		ENTCURRENT = ENTROOT;
 	}
-//	int i;
 	size_t i;
 	for(i = 1; i < genesis->entC; i++){
 		ENTCURRENT = ENTROOT;

@@ -18,8 +18,8 @@
 #define MSGENDY		3
 #define	WINSTARTX	0
 #define WINSTARTY	3
-#define WINENDX		24
-#define WINENDY		80
+#define WINENDX		80
+#define WINENDY		24
 #define MAXMAPHEIGHT	255
 #define MAXMAPWIDTH	255
 
@@ -136,7 +136,17 @@ enum FLAG_TYPES{
 	FLAG_ISMOBILE = 4,	// Entity is mobile
 	FLAG_ISAGGRESSIVE = 8,
 };
-
+/*
+enum WEAR_FLAGS{
+	WEAR_HEAD = 0,
+	WEAR_BODY = 1,
+	WEAR_WIELD_L = 2,
+	WEAR_WIELD_R = 3,
+	WEAR_HANDS = 4,
+	WEAR_LEGS = 5,
+	WEAR_FEET = 6,
+};
+*/
 enum WEAR_FLAGS{
 	WEAR_HEAD = 1,
 	WEAR_BODY = 2,

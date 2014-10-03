@@ -49,13 +49,13 @@ void addFlag(ENTP e, int flag){
 void delFlag(ENTP e, int flag){
 	switch(e->category){
 		case C_CREATURE:
-			if(!checkFlag(e, flag)) ((CREP)e->ent)->flags += flag;
+			if(checkFlag(e, flag)) ((CREP)e->ent)->flags -= flag;
 			return;
 		case C_ITEM:
-			if(!checkFlag(e, flag)) ((ITEMP)e->ent)->flags += flag;
+			if(checkFlag(e, flag)) ((ITEMP)e->ent)->flags -= flag;
 			return;
 		case C_OBJECT:
-			if(!checkFlag(e, flag)) ((OBJP)e->ent)->flags += flag;
+			if(checkFlag(e, flag)) ((OBJP)e->ent)->flags -= flag;
 			return;
 		default:
 			return;
@@ -300,7 +300,7 @@ void getItem(ENTP entity, ENTP item){
 		if(c->inventory[slot].itemType == ITEM_NONE) break;
 	}
 	memcpy(&c->inventory[slot], i, sizeof(_ITEM));
-	i = NULL;
+//	i = NULL;
 	delEnt(item);
 	return;
 }
