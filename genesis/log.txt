@@ -1,5 +1,0 @@
-function canHear() src = Dog, tgt = Goomba returning TRUE
-function canHear() src = Dog, tgt = Goomba returning TRUE
-function canHear() src = Dog, tgt = Goomba returning TRUE
-function canHear() src = Dog, tgt = Goomba returning TRUE
-function canHear() src = Bat, tgt = Goomba returning TRUE

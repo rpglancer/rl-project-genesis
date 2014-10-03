@@ -1,2 +1,0 @@
-All future bugs and so forth will be reported with git, since that
-is far easier to manage than this stupid text file.
