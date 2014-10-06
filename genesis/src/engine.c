@@ -149,18 +149,27 @@ void displayInventory(CREP creature){
 	int cursX = 0;
 	int action = ACTION_NONE;
 	bool invOK = false;
-	WINDOW *inventory = newWindow(10, 20, MAXHEIGHT/2, MAXWIDTH/2);
+	WINDOW *inventory = newWindow(8, 20, 11, 20);		// y, x, h, w
+	WINDOW *equipment = newWindow(8, 40, 11, 20);		// y, x, h, w
 	while(!invOK){
+		wclear(equipment);
 		wclear(inventory);
-		mvwprintw(inventory, 0, 10, "-- Inventory --");
+		mvwprintw(inventory, 0, 0, "-- Inventory --");
 		size_t i;
 		int y;
+		mvwprintw(equipment, 0, 0, "-- Equipment --");
 		for(i = 0, y = 1; i < 10; i++, y++){
 			if(creature->inventory[i].itemType != ITEM_NONE) mvwprintw(inventory, y, 1, "%s", creature->inventory[i].name);
 			else mvwprintw(inventory, y, 1, "[None]");
 		}
 		mvwaddch(inventory, cursY, cursX, select);
 		wrefresh(inventory);
+		for(i = 0, y = 1; i < 7; i++, y++){
+			EQUIPMENT *eq = &creature->equipment[i];
+			if(eq->item != NULL) mvwprintw(equipment, y, 1, "%s", eq->item->itemName);
+			else mvwprintw(equipment, y, 1, "[Empty]");
+		}
+		wrefresh(equipment);
 		switch(getch()){
 			case '\n':
 				action = contextMenu(&creature->inventory[cursY - 1], getbegy(inventory) + cursY, getbegx(inventory) + 10);
@@ -180,6 +189,8 @@ void displayInventory(CREP creature){
 		}
 	}
 	if(action == ACTION_EQUIP) equipItem(creature, &creature->inventory[cursY - 1]);
+	if(action == ACTION_DROP) pushMsg(player, NULL, MSG_DROP, cursY - 1);
+	delWindow(equipment);
 	delWindow(inventory);
 	refresh();
 }

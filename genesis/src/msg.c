@@ -13,8 +13,12 @@ MESSAGE *freeMsgList(MESSAGE *list){
 	return list;
 }
 
+bool sortQueue(MESSAGE *queue){
+	// Find a way to sort queue by entity initiative.
+	return true;
+}
+
 int initQueue(){
-//	MSGQUEUE = (MESSAGE *)malloc(sizeof(MESSAGE));
 	MSGQUEUE = (MESSAGE *)calloc(1, sizeof(MESSAGE));
 	if(MSGQUEUE == NULL)return ERR_MALLOC;
 	MSGCURRENT = MSGQUEUE;
@@ -80,7 +84,6 @@ int popMsg(MESSAGE *msg){
 }
 
 int pushMsg(ENTITY *src, ENTITY *tgt, int type, int flag){
-//	MESSAGE *newMsg = (MESSAGE *)malloc(sizeof(MESSAGE));
 	MESSAGE *newMsg = (MESSAGE *)calloc(1,sizeof(MESSAGE));
 	if(newMsg == NULL)return ERR_MALLOC;
 	newMsg->source = src;
@@ -89,6 +92,7 @@ int pushMsg(ENTITY *src, ENTITY *tgt, int type, int flag){
 	newMsg->msgFlag = flag;
 	newMsg->next = MSGQUEUE;
 	MSGQUEUE = newMsg;
+	sortQueue(MSGQUEUE);
 	return ERR_NONE;
 }
 
