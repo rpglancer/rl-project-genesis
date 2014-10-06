@@ -18,6 +18,6 @@ consequently unknown. It may compile on x86/x64, it may
 not. Any feedback on the matter would be welcomed.
 
 Current Requrements:
-Linux 3.6.11+ [armv61]
-NCurses development libraries
-80x24 Terminal Window
+* Linux 3.6.11+ [armv61]
+* NCurses development libraries
+* 80x24 Terminal Window
