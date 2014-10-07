@@ -149,6 +149,24 @@ CREATURESTATS *loadCreature(LL *list){
 	return creature;
 }
 
+bool isCarried(CREP creature, ITEMP item){
+	if(isNull(creature) || isNull(item)) return false;
+	size_t i;
+	for(i = 0; i < 10; i++){
+		if(&creature->inventory[i] == item) return true;
+	}
+	return false;
+}
+
+bool isEquipped(CREP creature, ITEMP item){
+	if(isNull(creature) || isNull(item)) return false;
+	size_t i;
+	for(i = 0; i < 7; i++){
+		if(creature->equipment[i].item == item) return true;
+	}
+	return false;
+}
+
 bool inventoryFull(CREP creature){
 	if(creature == NULL) return true;
 	size_t i;

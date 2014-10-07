@@ -68,6 +68,8 @@ CREATURESTATS *addCreature(CREATURESTATS *list);	// Allocate memory for a new cr
 CREATURESTATS *delCreatureList(CREATURESTATS *list);	// Delete all available creatures
 CREATURESTATS *loadCreature(LL *list);			// Load creature file into memory
 
+bool isCarried(CREP creature, ITEMP item);
+bool isEquipped(CREP creature, ITEMP item);
 bool inventoryFull(CREP creature);
 
 size_t getClassCount(CLASSSTATS *list);

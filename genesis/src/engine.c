@@ -377,6 +377,71 @@ void quickAI(){
 }
 
 int contextMenu(ITEMP item, uint y, uint x){
+	if(isNull(item)) return ACTION_NONE;
+	if(item->itemType == ITEM_NONE) return ACTION_NONE;
+	char select = '>';
+	uchar maxSelect = 0;
+	uchar cursY = 1;
+	uchar cursX = 0;
+	uchar action[7];
+	bool contextOK = false;
+	WINDOW *context = newWindow(y,x,8,8);
+	while(!contextOK){
+		wclear(context);
+		mvwprintw(context, 0, 1, "ACTION:");
+		mvwaddch(context, cursY, cursX, select);
+		switch(item->itemType){
+			case ITEM_CONSUMABLE:
+				break;
+			case ITEM_KEYITEM:
+				break;
+			case ITEM_WEAPON:
+				if(isEquipped((CREP)player->ent, item)){
+					maxSelect = 3;
+					mvwprintw(context, 1, 1, "none");
+					mvwprintw(context, 2, 1, "remove");
+					mvwprintw(context, 3, 1, "exam");
+					action[0] = ACTION_NONE;
+					action[1] = ACTION_REMOVE;
+					action[2] = ACTION_EXAM;
+				}
+				if(isCarried((CREP)player->ent, item)){
+					maxSelect = 5;
+					mvwprintw(context, 1, 1, "none");
+					mvwprintw(context, 2, 1, "move");
+					mvwprintw(context, 3, 1, "equip");
+					mvwprintw(context, 4, 1, "drop");
+					mvwprintw(context, 5, 1, "exam");
+					action[0] = ACTION_NONE;
+					action[1] = ACTION_MOVE;
+					action[2] = ACTION_EQUIP;
+					action[3] = ACTION_DROP;
+					action[4] = ACTION_EXAM;
+				}
+				break;
+			case ITEM_ARMOR:
+				break;
+			case ITEM_ACC:
+				break;
+		}
+		wrefresh(context);
+		switch(getch()){
+			case KEY_DOWN:
+				if(cursY < maxSelect) ++cursY;
+				break;
+			case KEY_UP:
+				if(cursY > 1) --cursY;
+				break;
+			case '\n':
+				delWindow(context);
+				return action[cursY - 1];
+			default:
+				break;
+		}
+	}
+}
+/*
+int contextMenu(ITEMP item, uint y, uint x){
 	if(item == NULL || item->itemType == ITEM_NONE) return ACTION_NONE;
 	char select = '>';
 	int cursY = 1;
@@ -410,7 +475,7 @@ int contextMenu(ITEMP item, uint y, uint x){
 		}
 	}
 }
-
+*/
 int engineRun(){
 	while(genesis->engineStatus != ENGINESTOP){
 		engineDraw();

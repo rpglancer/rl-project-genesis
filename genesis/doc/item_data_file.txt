@@ -1,0 +1,12 @@
+#ch
+#itemName
+#itemSize
+#itemType
+#itemWearF
+#itemUseF
+#itemWeight
+#itemAC
+#itemDmgType
+#itemDmgRoll
+#itemDmgSize
+#itemDmgMod
