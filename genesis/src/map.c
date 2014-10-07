@@ -74,6 +74,22 @@ void fillWall(struct TILE *map, int sy, int sx, int ft, int wt){
 			}
 		}
 	}
+	for(y = 0; y < sy; y++){
+		for(x = 0; x < sx; x++){
+			if(y == 0){
+				if(map[S(y,sx,x)].tT == ft) map[C(y,sx,x)].tT = wt;
+			}
+			if(x == 0){
+				if(map[E(y,sx,x)].tT == ft) map[C(y,sx,x)].tT = wt;
+			}
+			if(y == sy - 1){
+				if(map[N(y,sx,x)].tT == ft) map[C(y,sx,x)].tT = wt;
+			}
+			if(x == sx - 1){
+				if(map[W(y,sx,x)].tT == ft) map[C(y,sx,x)].tT = wt;
+			}
+		}
+	}
 }
 
 int initMap(int sy, int sx, int nr, int ft, int wt){
