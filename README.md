@@ -20,4 +20,4 @@ not. Any feedback on the matter would be welcomed.
 Current Requrements:
 * Linux 3.6.11+ [armv61]
 * NCurses development libraries
-* 80x24 Terminal Window
+* 80x24 Terminal Window w/ 8 Color support
