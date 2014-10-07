@@ -126,9 +126,10 @@ enum CONTEXT_ACTIONS{
 	ACTION_NONE = 0,
 	ACTION_MOVE = 1,
 	ACTION_EQUIP = 2,
-	ACTION_DROP = 3,
-	ACTION_EXAM = 4,
-	ACTION_USE = 5,
+	ACTION_REMOVE = 3,
+	ACTION_DROP = 4,
+	ACTION_EXAM = 5,
+	ACTION_USE = 6,
 };
 
 enum ERRORS{
@@ -143,7 +144,7 @@ enum FLAG_TYPES{
 	FLAG_ISALIVE = 1,	// Entity is alive
 	FLAG_ISVISIBLE = 2,	// Entity is visible
 	FLAG_ISMOBILE = 4,	// Entity is mobile
-	FLAG_ISAGGRESSIVE = 8,
+	FLAG_ISAGGRESSIVE = 8,	// Entity is aggressive
 };
 
 enum WEAR_FLAGS{
@@ -206,6 +207,8 @@ enum MESSAGES{
 	MSG_CAST = 8,		// Cast message
 	MSG_GET = 9,		// Get message
 	MSG_DROP = 10,		// Drop message
+	MSG_EQUIP = 11,		// Equip message
+	MSG_REMOVE = 12,	// Remove message
 };
 
 enum LOADTYPE{

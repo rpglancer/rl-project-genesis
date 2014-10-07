@@ -2,7 +2,7 @@
 #define C_ENGINE
 #include "../include/engine.h"
 
-bool checkCombat(ENTITY *src, unsigned int dir){
+bool checkCombat(ENTP src, unsigned int dir){
 	for(ENTCURRENT = ENTROOT; ENTCURRENT != NULL; ENTCURRENT = ENTCURRENT->next){
 		if(ENTCURRENT == src) continue;
 		if(src->category == C_CREATURE && ENTCURRENT->category == C_CREATURE){
@@ -26,7 +26,7 @@ bool checkCombat(ENTITY *src, unsigned int dir){
 	return false;
 }
 
-bool checkCreature(ENTITY *entity, unsigned int dir){
+bool checkCreature(ENTP entity, uint dir){
 	if(entity == NULL) return false;
 	if(ENTCURRENT == NULL) return true;
 	switch(dir){
@@ -46,7 +46,7 @@ bool checkCreature(ENTITY *entity, unsigned int dir){
 	return true;
 }
 
-bool checkMove(ENTITY *entity, unsigned int dir){
+bool checkMove(ENTP entity, uint dir){
 	if(entity == NULL) return false;
 	if(!checkTile(entity, dir))return false;
 	for(ENTCURRENT = ENTROOT; ENTCURRENT != NULL; ENTCURRENT = ENTCURRENT->next){
@@ -62,7 +62,7 @@ bool checkMove(ENTITY *entity, unsigned int dir){
 	return true;
 }
 
-bool checkObject(ENTITY *entity, unsigned int dir){
+bool checkObject(ENTP entity, uint dir){
 	if(entity == NULL) return false;
 	if(ENTCURRENT == NULL) return true;
 	switch(dir){
@@ -90,7 +90,7 @@ bool checkObject(ENTITY *entity, unsigned int dir){
 	return true;
 }
 
-bool checkTile(ENTITY *entity, unsigned int dir){
+bool checkTile(ENTP entity, uint dir){
 	switch(dir){
 		case DIR_NORTH:
 			if(entity->locY == 0) return false;
@@ -109,7 +109,7 @@ bool checkTile(ENTITY *entity, unsigned int dir){
 	}
 }
 
-int didHit(CREATURE *src, CREATURE *tgt){
+int didHit(CREP src, CREP tgt){
 	int hit = rollDice(1, 20, 0);
 	if(hit == 1) return MISS;
 	if(hit == 20){
@@ -122,7 +122,7 @@ int didHit(CREATURE *src, CREATURE *tgt){
 	return MISS;
 }
 
-int getDmg(CREATURE *src, CREATURE *tgt){
+int getDmg(CREP src, CREP tgt){
 	int dmg = 0;
 	EQUIPMENT *eq = NULL;
 	size_t i;
@@ -145,6 +145,7 @@ int getDmg(CREATURE *src, CREATURE *tgt){
 void displayInventory(CREP creature){
 	if(creature == NULL) return;
 	char select = '>';
+	uchar cursorWin = 0;
 	int cursY = 1;
 	int cursX = 0;
 	int action = ACTION_NONE;
@@ -162,40 +163,51 @@ void displayInventory(CREP creature){
 			if(creature->inventory[i].itemType != ITEM_NONE) mvwprintw(inventory, y, 1, "%s", creature->inventory[i].name);
 			else mvwprintw(inventory, y, 1, "[None]");
 		}
-		mvwaddch(inventory, cursY, cursX, select);
 		wrefresh(inventory);
 		for(i = 0, y = 1; i < 7; i++, y++){
 			EQUIPMENT *eq = &creature->equipment[i];
 			if(eq->item != NULL) mvwprintw(equipment, y, 1, "%s", eq->item->itemName);
 			else mvwprintw(equipment, y, 1, "[Empty]");
 		}
+		(cursorWin == 0) ? (mvwaddch(inventory, cursY, cursX, select)) : (mvwaddch(equipment,cursY, cursX, select));
 		wrefresh(equipment);
+		wrefresh(inventory);
 		switch(getch()){
 			case '\n':
-				action = contextMenu(&creature->inventory[cursY - 1], getbegy(inventory) + cursY, getbegx(inventory) + 10);
+				if(cursorWin == 0) action = contextMenu(&creature->inventory[cursY - 1], getbegy(inventory) + cursY, getbegx(inventory) + 10);
+				if(cursorWin == 1) action = contextMenu(creature->equipment[cursY - 1].item, getbegy(equipment) + cursY, getbegx(equipment) + 10);
 				if(action != ACTION_NONE) invOK = true;
 				break;
 			case 'i':
 				invOK = true;
 				break;
 			case KEY_DOWN:
-				if(cursY < 10) ++cursY;
+				if (cursorWin == 0 && cursY < 10) ++cursY;
+				else if (cursorWin == 1 && cursY < 7) ++ cursY;
 				break;
 			case KEY_UP:
 				if(cursY > 1) --cursY;
+				break;
+			case KEY_RIGHT:
+				if(cursorWin == 0)++cursorWin;
+				break;
+			case KEY_LEFT:
+				if(cursorWin == 1)--cursorWin;
 				break;
 			default:
 				break;
 		}
 	}
-	if(action == ACTION_EQUIP) equipItem(creature, &creature->inventory[cursY - 1]);
+//	if(action == ACTION_EQUIP) equipItem(creature, &creature->inventory[cursY - 1]);
+	if(action == ACTION_EQUIP) pushMsg(player, NULL, MSG_EQUIP, cursY - 1);
 	if(action == ACTION_DROP) pushMsg(player, NULL, MSG_DROP, cursY - 1);
+	if(action == ACTION_REMOVE) pushMsg(player, NULL, MSG_REMOVE, cursY - 1);
 	delWindow(equipment);
 	delWindow(inventory);
 	refresh();
 }
 
-void doCombat(CREATURE *src, CREATURE *tgt){
+void doCombat(CREP src, CREP tgt){
 	switch(didHit(src, tgt)){
 		case CRIT:
 			tgt->hp -= (getDmg(src, tgt) * 2);
@@ -209,22 +221,23 @@ void doCombat(CREATURE *src, CREATURE *tgt){
 }
 
 void drawHeader(){
-	mvprintw(0, 0,"%.10s the %.10s", ((CREP)player->ent)->name, ((CREP)player->ent)->name);	// Playername the Title
-	mvprintw(1, 0,"%.12s %.12s", ((CREP)player->ent)->name, PLAYERCLASS->name);	// Raceish Class
+	CREP pc = (CREP)player->ent;
+	mvprintw(0, 0,"%.10s the %.10s", pc->name, pc->name);		// Playername the Title
+	mvprintw(1, 0,"%.12s %.12s", pc->name, PLAYERCLASS->name);	// Raceish Class
 	attron(COLOR_PAIR(3));
 	attron(A_BOLD);
-	mvprintw(2, 0,"%3i/%3i", ((CREP)player->ent)->hp, ((CREP)player->ent)->hpMax);
+	mvprintw(2, 0,"%3i/%3i", pc->hp, pc->hpMax);
 	attroff(COLOR_PAIR(3));
 	attron(COLOR_PAIR(4));
-	mvprintw(2, 8,"%3i/%3i", ((CREP)player->ent)->mp, ((CREP)player->ent)->mpMax);
+	mvprintw(2, 8,"%3i/%3i", pc->mp, pc->mpMax);
 	attroff(COLOR_PAIR(4));
 	attron(COLOR_PAIR(5));
-	mvprintw(2, 16,"%3i/%3i", ((CREP)player->ent)->ap, ((CREP)player->ent)->apMax);
+	mvprintw(2, 16,"%3i/%3i", pc->ap, pc->apMax);
 	attroff(COLOR_PAIR(5));
 	attroff(A_BOLD);
-	mvprintw(0, 26, "STR:%2i INT:%2i", ((CREP)player->ent)->STR, ((CREP)player->ent)->INT);
-	mvprintw(1, 26, "CON:%2i WIS:%2i", ((CREP)player->ent)->CON, ((CREP)player->ent)->WIS);
-	mvprintw(2, 26, "DEX:%2i CHA:%2i", ((CREP)player->ent)->DEX, ((CREP)player->ent)->CHA);
+	mvprintw(0, 26, "STR:%2i INT:%2i", pc->STR, pc->INT);
+	mvprintw(1, 26, "CON:%2i WIS:%2i", pc->CON, pc->WIS);
+	mvprintw(2, 26, "DEX:%2i CHA:%2i", pc->DEX, pc->CHA);
 	printHistory();
 }
 
@@ -306,7 +319,7 @@ void engineShutdown(){
 	VIEW = NULL;
 }
 
-bool checkArea(ENTITY *src, ENTITY *tgt, unsigned int rad){
+bool checkArea(ENTP src, ENTP tgt, uint rad){
 	int tempOffset = 0;
 	int y, x;
 	for(y = tgt->locY - rad; y < tgt->locY + rad; y++){
@@ -369,21 +382,22 @@ int contextMenu(ITEMP item, uint y, uint x){
 	int cursY = 1;
 	int cursX = 0;
 	bool contextOK = false;
-	WINDOW *context = newWindow(y, x, 7, 8);
+	WINDOW *context = newWindow(y, x, 8, 8);
 	while(!contextOK){
 		wclear(context);
 		mvwprintw(context, 0, 1, "ACTION:");
 		mvwprintw(context, 1, 1, "none");
 		mvwprintw(context, 2, 1, "move");
 		mvwprintw(context, 3, 1, "equip");
-		mvwprintw(context, 4, 1, "drop");
-		mvwprintw(context, 5, 1, "exam");
-		mvwprintw(context, 6, 1, "use");
+		mvwprintw(context, 4, 1, "remove");
+		mvwprintw(context, 5, 1, "drop");
+		mvwprintw(context, 6, 1, "exam");
+		mvwprintw(context, 7, 1, "use");
 		mvwaddch(context, cursY, cursX, select);
 		wrefresh(context);
 		switch(getch()){
 			case KEY_DOWN:
-				if(cursY < 6) ++cursY;
+				if(cursY < 7) ++cursY;
 				break;
 			case KEY_UP:
 				if(cursY > 1) --cursY;
@@ -446,6 +460,17 @@ int engineUpdate(){
 			case MSG_DROP:
 				dropItem(MSGCURRENT->source, &((CREP)MSGCURRENT->source->ent)->inventory[MSGCURRENT->msgFlag]);
 				break;
+			case MSG_EQUIP:{
+				CREP c = (CREP)MSGCURRENT->source->ent;
+				ITEMP i = &c->inventory[MSGCURRENT->msgFlag];
+				equipItem(c,i);
+				break;
+			}
+			case MSG_REMOVE:{
+				CREP c = (CREP)MSGCURRENT->source->ent;
+				ITEMP i = c->equipment[MSGCURRENT->msgFlag].item;
+				removeItem(c,i);
+			}
 			case MSG_OPEN:
 				doOpen(seekEntity(MSGCURRENT->target));
 				break;
@@ -484,8 +509,8 @@ int loadAssets(){
 	OBJECTLIST = loadObject(objectLoad);
 	LL *classLoad = loadList(TYPE_CLASS);
 	CLASSLIST = loadClass(classLoad);
-	if(ARTLIST == NULL || CLASSLIST == NULL ||
-		CREATURELIST == NULL || OBJECTLIST == NULL) return ERR_MALLOC;
+	if(isNull(ARTLIST) || isNull(CLASSLIST) ||
+		isNull(CREATURELIST) || isNull(OBJECTLIST)) return ERR_MALLOC;
 	artLoad = delLoadList(artLoad);
 	classLoad = delLoadList(classLoad);
 	creatureLoad = delLoadList(creatureLoad);
@@ -614,40 +639,6 @@ void loadCurrent(){
 	player = ENTROOT;
 	player->ent = ENTROOT->ent;
 	fclose(f);
-}
-
-void displayEq(){
-	char select = '>';
-	bool eqOK = false;
-	int cursY = 1;
-	int cursX = 0;
-	int y = 1;
-	WINDOW *win_eq = newWindow(10, 20, MAXHEIGHT/2, MAXWIDTH / 2);
-	EQUIPMENT *cur;
-	while(!eqOK){
-		wclear(win_eq);
-		mvwprintw(win_eq, 0, 10, "-- Equipment --");
-		mvwaddch(win_eq, cursY, cursX, select);
-		wrefresh(win_eq);
-		genesis->ch = getch();
-		switch(genesis->ch){
-			case 27:
-				eqOK = true;
-				break;
-			case 'q':
-				eqOK = true;
-				break;
-			case KEY_DOWN:
-				if(cursY < 7) ++cursY;
-				break;
-			case KEY_UP:
-				if(cursY > 1) --cursY;
-				break;
-		}
-	}
-	delWindow(win_eq);
-	refresh();
-	return;
 }
 
 /*

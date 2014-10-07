@@ -174,37 +174,7 @@ void delCreature(CREP creature){
 	free(creature);
 	creature = NULL;
 }
-/*
-void displayInventory(CREP creature){
-	char select = '>';
-	int cursY = 1;
-	int cursX = 0;
-	bool invOK = false;
-	if(creature == NULL) return;
-	WINDOW *win_inv = newWindow(10, 20, MAXHEIGHT/2, MAXWIDTH/2);
-	while(!invOK){
-		wclear(win_inv);
-		mvwprintw(win_inv, 0, 10, "-- Inventory --");
-		size_t i;
-		int y;
-		for(i = 0, y = 1; i < 10; i++, y++){
-			if(creature->inventory[i].itemType != ITEM_NONE) mvwprintw(win_inv, y, 0, "%s", creature->inventory[i].itemName);
-			else mvwprintw(win_inv, y, 0, "[None]");
-		}
-		wrefresh(win_inv);
-		switch(getch()){
-			case 'q':
-				invOK = true;
-				break;
-			default:
-				break;
-		}
-	}
-	delWindow(win_inv);
-	refresh();
-	return;
-}
-*/
+
 void equipItem(CREP creature, ITEMP item){
 	if(creature == NULL || item == NULL) return;
 	EQUIPMENT *eq = NULL;
@@ -233,6 +203,7 @@ void equipItem(CREP creature, ITEMP item){
 		default:
 			return;
 	}
+	if(isNull(eq)) return;
 	if(eq->item == NULL){
 		eq->item = (ITEMP)malloc(sizeof(_ITEM));
 		memcpy(eq->item, item, sizeof(_ITEM));
@@ -243,6 +214,22 @@ void equipItem(CREP creature, ITEMP item){
 		memcpy(eq->item, item, sizeof(_ITEM));
 		memcpy(item, temp, sizeof(_ITEM));
 	}
+}
+
+void removeItem(CREP creature, ITEMP item){
+	if(isNull(creature) || isNull(item)) return;
+	EQUIPMENT *eq = &creature->equipment[item->itemWearFlags];
+	if(isNull(eq))return;
+	size_t i;
+	for(i = 0; i < 10; i++){
+		if(creature->inventory[i].itemType == ITEM_NONE) break;
+	}
+	if(creature->inventory[i].itemType != ITEM_NONE) return;
+	memcpy(&creature->inventory[i], item, sizeof(_ITEM));
+	i = item->itemWearFlags;
+	creature->equipment[i].item = NULL;
+	free(creature->equipment[i].item);
+	return;
 }
 
 size_t selectItem(CREP creature){

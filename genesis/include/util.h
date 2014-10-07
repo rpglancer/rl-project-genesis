@@ -25,6 +25,7 @@ ART *delArtList(ART *list);
 ART *loadArt(LL *list);
 ART *seekArt(ART *list, char *name);
 
+bool isNull(void *);
 bool yesNo();
 
 int getMinLevel(int level);

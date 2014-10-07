@@ -70,19 +70,6 @@ void bspSplit(BSP *bsp, int direction, int position){
 		bsp->right->y = position;
 		bsp->right->h = bsp->h;
 	}
-/*
-	FILE *log = fopen("bsplog.txt", "a");
-	if(log == NULL) return;
-	fprintf(log, "%i %i %i %i %i %p %p %p\n", bsp->level,
-						bsp->y,
-						bsp->x,
-						bsp->h,
-						bsp->w,
-						bsp->father,
-						bsp->left,
-						bsp->right);
-	fclose(log);
-*/
 }
 
 void bspRecursive(BSP *bsp, int depth){

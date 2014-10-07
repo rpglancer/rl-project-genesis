@@ -202,6 +202,11 @@ LL *loadList(unsigned int listType){
 	return newList;
 }
 
+bool isNull(void *data){
+	if(data == NULL) return true;
+	return false;
+}
+
 bool yesNo(){
 //	if(genesis == NULL) return false;
 	bool answerOK = false;
