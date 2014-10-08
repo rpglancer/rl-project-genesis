@@ -85,18 +85,20 @@ bool checkFlag(ENTP e, int flag){
 		if(flag == FLAG_ARRAY[i]) i--;
 		else eFlag -= FLAG_ARRAY[i], i--;
 	}
-	if(eFlag - flag == 0) return true;
-	return false;
+	return (eFlag - flag == 0);
+//	if(eFlag - flag == 0) return true;
+//	return false;
 }
 
 bool canHear(ENTP src, ENTP tgt){
 	if(src == NULL || tgt == NULL){
 		 return false;
 	}
-	if(checkArea(src, tgt, ((CREATURE *)src->ent)->WIS)){
-		return true;
-	}
-	return false;
+	return (checkArea(src, tgt, ((CREP)src->ent)->WIS));
+//	if(checkArea(src, tgt, ((CREATURE *)src->ent)->WIS)){
+//		return true;
+//	}
+//	return false;
 }
 
 /*	Delete specified entity		*/
@@ -514,7 +516,6 @@ void spawnCreature(ENTP list, CREATURESTATS *creature, UINT level, UINT y, UINT 
 	((CREP)e->ent)->ch = creature->ch;
 	((CREP)e->ent)->color = creature->color;
 	((CREP)e->ent)->flags = creature->flags;
-
 	setCreatureStats( (CREP)e->ent, creature, genesis->floor);
 }
 

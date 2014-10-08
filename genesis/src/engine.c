@@ -90,19 +90,20 @@ bool checkObject(ENTP entity, uint dir){
 	return true;
 }
 
+/*	Should work without the if statements		*/
 bool checkTile(ENTP entity, uint dir){
 	switch(dir){
 		case DIR_NORTH:
-			if(entity->locY == 0) return false;
+//			if(entity->locY == 0) return false;
 			return TILE_INDEX[MAP[N(entity->locY, genesis->maxX, entity->locX)].tT].tPass;
 		case DIR_EAST:
-			if(entity->locX == genesis->maxX - 1) return false;
+//			if(entity->locX == genesis->maxX - 1) return false;
 			return TILE_INDEX[MAP[E(entity->locY, genesis->maxX, entity->locX)].tT].tPass;
 		case DIR_SOUTH:
-			if(entity->locY == genesis->maxY - 1) return false;
+//			if(entity->locY == genesis->maxY - 1) return false;
 			return TILE_INDEX[MAP[S(entity->locY, genesis->maxX, entity->locX)].tT].tPass;
 		case DIR_WEST:
-			if(entity->locX == 0) return false;
+//			if(entity->locX == 0) return false;
 			return TILE_INDEX[MAP[W(entity->locY, genesis->maxX, entity->locX)].tT].tPass;
 		default:
 			return false;
@@ -198,7 +199,6 @@ void displayInventory(CREP creature){
 				break;
 		}
 	}
-//	if(action == ACTION_EQUIP) equipItem(creature, &creature->inventory[cursY - 1]);
 	if(action == ACTION_EQUIP) pushMsg(player, NULL, MSG_EQUIP, cursY - 1);
 	if(action == ACTION_DROP) pushMsg(player, NULL, MSG_DROP, cursY - 1);
 	if(action == ACTION_REMOVE) pushMsg(player, NULL, MSG_REMOVE, cursY - 1);
@@ -440,42 +440,6 @@ int contextMenu(ITEMP item, uint y, uint x){
 		}
 	}
 }
-/*
-int contextMenu(ITEMP item, uint y, uint x){
-	if(item == NULL || item->itemType == ITEM_NONE) return ACTION_NONE;
-	char select = '>';
-	int cursY = 1;
-	int cursX = 0;
-	bool contextOK = false;
-	WINDOW *context = newWindow(y, x, 8, 8);
-	while(!contextOK){
-		wclear(context);
-		mvwprintw(context, 0, 1, "ACTION:");
-		mvwprintw(context, 1, 1, "none");
-		mvwprintw(context, 2, 1, "move");
-		mvwprintw(context, 3, 1, "equip");
-		mvwprintw(context, 4, 1, "remove");
-		mvwprintw(context, 5, 1, "drop");
-		mvwprintw(context, 6, 1, "exam");
-		mvwprintw(context, 7, 1, "use");
-		mvwaddch(context, cursY, cursX, select);
-		wrefresh(context);
-		switch(getch()){
-			case KEY_DOWN:
-				if(cursY < 7) ++cursY;
-				break;
-			case KEY_UP:
-				if(cursY > 1) --cursY;
-				break;
-			case '\n':
-				delWindow(context);
-				return cursY - 1;
-			default:
-				break;
-		}
-	}
-}
-*/
 int engineRun(){
 	while(genesis->engineStatus != ENGINESTOP){
 		engineDraw();
@@ -490,6 +454,10 @@ int engineRun(){
 
 int engineUpdate(){
 	for(MSGCURRENT = MSGQUEUE; MSGCURRENT != NULL; MSGCURRENT = MSGCURRENT->next){
+		if(!checkFlag(MSGCURRENT->source, FLAG_ISALIVE)){
+			popMsg(MSGCURRENT);
+			continue;
+		}
 		switch(MSGCURRENT->msgType){
 			case MSG_MOVE:
 				if(!checkFlag(MSGCURRENT->source, FLAG_ISMOBILE)) continue;
@@ -595,7 +563,7 @@ int newGame(){
 	if(initEnt() != ERR_NONE) return ERR_MALLOC;
 	// Call player generator here
 	newPlayer();
-	if(initQueue() != ERR_NONE) return ERR_MALLOC;
+//	if(initQueue() != ERR_NONE) return ERR_MALLOC;
 	if(initHistory() != ERR_NONE) return ERR_MALLOC;
 	if(initMap(100, 100, 5, TILE_ROCKFLOOR, TILE_WALL) != ERR_NONE) return ERR_MALLOC;
 	setViewCurrent(player->locY, player->locX);

@@ -13,11 +13,6 @@ MESSAGE *freeMsgList(MESSAGE *list){
 	return list;
 }
 
-bool sortQueue(MESSAGE *queue){
-	// Find a way to sort queue by entity initiative.
-	return true;
-}
-
 int initQueue(){
 	MSGQUEUE = (MESSAGE *)calloc(1, sizeof(MESSAGE));
 	if(MSGQUEUE == NULL)return ERR_MALLOC;
@@ -43,6 +38,14 @@ int initHistory(){
 	if(ACTHISTORY == NULL) return ERR_MALLOC;
 	textHistorySize = 1;
 	return ERR_NONE;
+}
+
+int queueLength(MESSAGE *queue){
+	uint len = 0;
+	for(queue; queue != NULL; queue = queue->next){
+		len++;
+	}
+	return len;
 }
 
 void printHistory(){
@@ -225,5 +228,32 @@ int pushHistory(ENTITY *source, ENTITY *target, int msgType, int msgFlag){
 			break;
 	}
 	return ERR_NONE;
+}
+
+int sortQueue(MESSAGE *queue){
+	uint length = queueLength(queue);
+	uint i;
+	for(i = 0; i < length; i++){
+		MESSAGE *q;
+		for(q = queue; q->next != NULL; q = q->next){
+			if(isNull(q->source) || isNull(q->next->source)) continue;
+			CREP cre1 = (CREP)q->source->ent;
+			CREP cre2 = (CREP)q->next->source->ent;
+			if(cre2->INI > cre1->INI){
+				int tempType = q->msgType;
+				int tempFlag = q->msgFlag;
+				ENTP tempSource = q->source;
+				ENTP tempTarget = q->target;
+				q->msgType = q->next->msgType;
+				q->msgFlag = q->next->msgFlag;
+				q->source = q->next->source;
+				q->target = q->next->target;
+				q->next->msgType = tempType;
+				q->next->msgFlag = tempFlag;
+				q->next->source = tempSource;
+				q->next->target = tempTarget;
+			}
+		}
+	}
 }
 #endif

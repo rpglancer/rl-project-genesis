@@ -34,6 +34,7 @@ int popHistory(_TEXT *);
 int popMsg(MESSAGE *);
 int pushHistory(ENTITY *, ENTITY *, int, int);
 int pushMsg(ENTITY *, ENTITY *, int, int);
+int sortQueue(MESSAGE *queue);
 
 MESSAGE *freeMsgList(MESSAGE *list);
 _TEXT *freeTextList(_TEXT *list);
