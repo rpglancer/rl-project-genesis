@@ -47,8 +47,8 @@
 
 #define OFFSETY(Y)	Y - VIEW->y + WINSTARTY
 #define OFFSETX(X)	X - VIEW->x
-
 #define ARRAYSIZE(a)	sizeof(a)/sizeof(a[0])
+
 #define CREP CREATURE *
 #define ENTP ENTITY *
 #define ITEMP _ITEM *
@@ -108,6 +108,7 @@ enum CLASSES{
 };
 
 enum DIRECTIONS{
+	DIR_SOMEWHERE = 0,
 	DIR_NORTH = 1,
 	DIR_EAST = 2,
 	DIR_SOUTH = 3,
@@ -209,6 +210,8 @@ enum MESSAGES{
 	MSG_DROP = 10,		// Drop message
 	MSG_EQUIP = 11,		// Equip message
 	MSG_REMOVE = 12,	// Remove message
+	MSG_COMBAT = 13,	// Combat message
+	MSG_DEATH = 14,		// Death message
 };
 
 enum LOADTYPE{

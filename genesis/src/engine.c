@@ -94,16 +94,12 @@ bool checkObject(ENTP entity, uint dir){
 bool checkTile(ENTP entity, uint dir){
 	switch(dir){
 		case DIR_NORTH:
-//			if(entity->locY == 0) return false;
 			return TILE_INDEX[MAP[N(entity->locY, genesis->maxX, entity->locX)].tT].tPass;
 		case DIR_EAST:
-//			if(entity->locX == genesis->maxX - 1) return false;
 			return TILE_INDEX[MAP[E(entity->locY, genesis->maxX, entity->locX)].tT].tPass;
 		case DIR_SOUTH:
-//			if(entity->locY == genesis->maxY - 1) return false;
 			return TILE_INDEX[MAP[S(entity->locY, genesis->maxX, entity->locX)].tT].tPass;
 		case DIR_WEST:
-//			if(entity->locX == 0) return false;
 			return TILE_INDEX[MAP[W(entity->locY, genesis->maxX, entity->locX)].tT].tPass;
 		default:
 			return false;
@@ -128,7 +124,7 @@ int getDmg(CREP src, CREP tgt){
 	EQUIPMENT *eq = NULL;
 	size_t i;
 	for(i = 0; i < 7; i++){
-		if(src->equipment[i].slot == WEAR_WIELD_R && src->equipment[i].item){
+		if(src->equipment[i].slot == WEAR_WIELD_R && !isNull(src->equipment[i].item)){
 			eq = &src->equipment[i];
 		}
 	}
@@ -143,6 +139,7 @@ int getDmg(CREP src, CREP tgt){
 	return dmg;
 }
 
+/* 	This should be moved to creature.c		*/
 void displayInventory(CREP creature){
 	if(creature == NULL) return;
 	char select = '>';

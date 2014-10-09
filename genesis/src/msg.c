@@ -54,8 +54,7 @@ void printHistory(){
 	int i, y, x;
 	_TEXT *m = ACTHISTORY;
 	for(i = 0, y = 2, x = 40; i < 3, m != NULL; i++, y--, m = m->next){
-		mvaddstr(y, x, m->message);
-		// use mvprintw() dummy
+		mvprintw(y, x, "%s %s %s.", m->source, m->message, m->target);
 	}
 	return;
 }
@@ -186,43 +185,23 @@ int pushHistory(ENTITY *source, ENTITY *target, int msgType, int msgFlag){
 	}
 	switch(msgType){
 		case MSG_ATTACK:
-			strcpy(ACTHISTORY->message, ACTHISTORY->source);
-			strcat(ACTHISTORY->message, " attacks ");
-			strcat(ACTHISTORY->message, ACTHISTORY->target);
+			strcat(ACTHISTORY->message, "attack");
+			if(source != player)strcat(ACTHISTORY->message, "s");
 			break;
-		case MSG_MOVE:
-			switch(msgFlag){
-				case DIR_NORTH:
-					strcpy(ACTHISTORY->message, ACTHISTORY->source);
-					strcat(ACTHISTORY->message, " move north.");
-					break;
-				case DIR_EAST:
-					strcpy(ACTHISTORY->message, ACTHISTORY->source);
-					strcat(ACTHISTORY->message, " move east.");
-					break;
-				case DIR_SOUTH:
-					strcpy(ACTHISTORY->message, ACTHISTORY->source);
-					strcat(ACTHISTORY->message, " move south.");
-					break;
-				case DIR_WEST:
-					strcpy(ACTHISTORY->message, ACTHISTORY->source);
-					strcat(ACTHISTORY->message, " move west.");
-					break;
-				default:
-					strcpy(ACTHISTORY->message, ACTHISTORY->source);
-					strcat(ACTHISTORY->message, " move somewhere.");
-					break;
-			}
+		case MSG_MOVE:{
+			char *directions[7] = {" somewhere", " north", " east", " south", " west", " up", " down"};
+			strcat(ACTHISTORY->message, "move");
+			if(source != player)strcat(ACTHISTORY->message, "s");
+			strcat(ACTHISTORY->message, directions[msgFlag]);
 			break;
+		}
 		case MSG_OPEN:
-			strcpy(ACTHISTORY->message, ACTHISTORY->source);
-			strcat(ACTHISTORY->message, " open ");
-			strcat(ACTHISTORY->message, ACTHISTORY->target);
+			strcat(ACTHISTORY->message, "open");
+			if(source != player)strcat(ACTHISTORY->message, "s");
 			break;
 		case MSG_CLOSE:
-			strcpy(ACTHISTORY->message, ACTHISTORY->source);
-			strcat(ACTHISTORY->message, " close ");
-			strcat(ACTHISTORY->message, ACTHISTORY->target);
+			strcat(ACTHISTORY->message, "close");
+			if(source != player)strcat(ACTHISTORY->message, "s");
 			break;
 		default:
 			break;
