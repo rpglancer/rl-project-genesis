@@ -19,6 +19,7 @@ typedef struct ENTITY{
 	uchar category;
 	uchar locY;
 	uchar locX;
+	bool flags[4];		// Update with added flags
 	void *ent;
 	struct ENTITY *next;
 }ENTITY;
@@ -33,7 +34,7 @@ ENTP delEntList(ENTP entity);
 ENTP seekEntity(ENTP entity);
 
 bool canHear(ENTP src, ENTP tgt);
-bool checkFlag(ENTP, int);
+bool checkFlag(ENTP, uint);
 bool seedCreature(int level, UINT ft);
 bool seedFurniture(int level);
 bool seedTraps(int level);
@@ -46,9 +47,9 @@ unsigned int countEnt();
 
 //void addEntity(ENTP list, UINT category);
 void addEnt(ENTP list, uint category, uint y, uint x);
-void addFlag(ENTP e, int flag);
+void addFlag(ENTP e, uint flag);
 void delEnt(ENTP entity);
-void delFlag(ENTP e, int flag);
+void delFlag(ENTP e, uint flag);
 void doClose(ENTP entity);
 void doOpen(ENTP entity);
 void drawEnt();

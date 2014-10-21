@@ -136,7 +136,8 @@ CREATURESTATS *loadCreature(LL *list){
 		fscanf(load, "%i %i", &c->WIL, &c->INI);
 		fscanf(load, "%i %i", &c->MLE, &c->RNG);
 		fscanf(load, "%i %i", &c->BAC, &c->BAB);
-		fscanf(load, "%i", &c->flags);
+//		fscanf(load, "%i", &c->flags);
+		fscanf(load, "%i %i %i %i", &c->flags[0], &c->flags[1], &c->flags[2], &c->flags[3]);
 		fscanf(load, "%i", &c->eqSlots[0]);
 		fscanf(load, "%i", &c->eqSlots[1]);
 		fscanf(load, "%i", &c->eqSlots[2]);

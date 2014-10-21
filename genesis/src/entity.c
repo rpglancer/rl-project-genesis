@@ -9,6 +9,7 @@ UINT FLAG_ARRAY[] = {
 	FLAG_ISMOBILE,
 };
 
+
 /*	Find a specific entity				*/
 ENTITY *seekEntity(ENTP entity){
 	if(entity == NULL) return NULL;
@@ -30,64 +31,17 @@ UINT countEnt(){
 	return count;
 }
 
-void addFlag(ENTP e, int flag){
-	switch(e->category){
-		case C_CREATURE:
-			if(!checkFlag(e, flag))((CREP)e->ent)->flags += flag;
-			return;
-		case C_ITEM:
-			if(!checkFlag(e, flag))((ITEMP)e->ent)->flags += flag;
-			return;
-		case C_OBJECT:
-			if(!checkFlag(e, flag))((OBJP)e->ent)->flags += flag;
-			return;
-		default:
-			return;
-	}
+void addFlag(ENTP e, uint flag){
+	if(e->flags[flag] == false) e->flags[flag] = true;
 }
 
-void delFlag(ENTP e, int flag){
-	switch(e->category){
-		case C_CREATURE:
-			if(checkFlag(e, flag)) ((CREP)e->ent)->flags -= flag;
-			return;
-		case C_ITEM:
-			if(checkFlag(e, flag)) ((ITEMP)e->ent)->flags -= flag;
-			return;
-		case C_OBJECT:
-			if(checkFlag(e, flag)) ((OBJP)e->ent)->flags -= flag;
-			return;
-		default:
-			return;
-	}
+void delFlag(ENTP e, uint flag){
+	if(e->flags[flag] == true) e->flags[flag] = false;
 }
 
 /*	Check applied flags of specified entity		*/
-bool checkFlag(ENTP e, int flag){
-	int eFlag;
-	switch(e->category){
-		case C_CREATURE:
-			eFlag = ((CREP)e->ent)->flags;
-			break;
-		case C_ITEM:
-			eFlag = ((ITEMP)e->ent)->flags;
-			break;
-		case C_OBJECT:
-			eFlag = ((OBJP)e->ent)->flags;
-			break;
-		default:
-			return false;
-	}
-	if(flag > eFlag) return false;
-	if(flag == eFlag) return true;
-	int i = ARRAYSIZE(FLAG_ARRAY) - 1;
-	while(i >= 0){
-		if(flag == FLAG_ARRAY[i]) i--;
-		else eFlag -= FLAG_ARRAY[i], i--;
-	}
-	return (eFlag - flag == 0);
-//	if(eFlag - flag == 0) return true;
-//	return false;
+bool checkFlag(ENTP e, uint flag){
+	return e->flags[flag];
 }
 
 bool canHear(ENTP src, ENTP tgt){
@@ -95,10 +49,6 @@ bool canHear(ENTP src, ENTP tgt){
 		 return false;
 	}
 	return (checkArea(src, tgt, ((CREP)src->ent)->WIS));
-//	if(checkArea(src, tgt, ((CREATURE *)src->ent)->WIS)){
-//		return true;
-//	}
-//	return false;
 }
 
 /*	Delete specified entity		*/
@@ -515,7 +465,9 @@ void spawnCreature(ENTP list, CREATURESTATS *creature, UINT level, UINT y, UINT 
 	memcpy( ((CREP)e->ent)->longDesc, creature->longDesc, sizeof(((CREP)e->ent)->longDesc));
 	((CREP)e->ent)->ch = creature->ch;
 	((CREP)e->ent)->color = creature->color;
-	((CREP)e->ent)->flags = creature->flags;
+//	((CREP)e->ent)->flags = creature->flags;
+	// Set flags
+	memcpy(e->flags, creature->flags, sizeof(bool) * 4);
 	setCreatureStats( (CREP)e->ent, creature, genesis->floor);
 }
 

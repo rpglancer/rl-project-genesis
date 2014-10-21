@@ -22,7 +22,7 @@ typedef struct CREATURE{
 	char name[20];
 	char shortDesc[25];
 	char longDesc[50];
-	int flags;
+//	int flags;	// [obsolete, handled with entity]
 	uchar color;
         UINT class, level;              	// Class and level
         int hp, hpMax;                          // Current HP / Maximum HP
@@ -40,14 +40,15 @@ typedef struct CREATURE{
 /*      CREATURESTATS structure         */
 typedef struct CREATURESTATS{
         char name[20], shortDesc[25], longDesc[50], ch;         // Name, description and ASCII representation
-        UINT class, color, flags;                       	// Class, color and flags
-        UINT dLevelMin, dLevelMax;                     	 	// Minimum and maximum dungeon level
+        uint class, color; 		                      	// Class, color and flags
+        uint dLevelMin, dLevelMax;                     	 	// Minimum and maximum dungeon level
         int hpMin, hpMax;                                       // Minimum and maximum HP
         int mpMin, mpMax;                                       // Minimum and maximum MP
         int apMin, apMax;                                       // Minimum and maximum AP
         int STR, CON, DEX, INT, WIS, CHA;                       // Strength, Constitution, Dexterity, Intelligence$
         int FOR, REF, WIL, INI, MLE, RNG;                       // Fortitude, Reflex, Will, Initiative, Melee, Ran$
         int BAC, BAB;                                           // Base Armor Class, Base Attack Bonus
+	bool flags[4];
         bool eqSlots[7];                                        // Equipment Slots
         struct CREATURESTATS *next;                             // Next in list
 }CREATURESTATS;

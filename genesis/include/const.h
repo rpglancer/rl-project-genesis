@@ -142,10 +142,10 @@ enum ERRORS{
 };
 
 enum FLAG_TYPES{
-	FLAG_ISALIVE = 1,	// Entity is alive
-	FLAG_ISVISIBLE = 2,	// Entity is visible
-	FLAG_ISMOBILE = 4,	// Entity is mobile
-	FLAG_ISAGGRESSIVE = 8,	// Entity is aggressive
+	FLAG_ISALIVE = 0,
+	FLAG_ISVISIBLE = 1,
+	FLAG_ISMOBILE = 2,
+	FLAG_ISAGGRESSIVE = 3,
 };
 
 enum WEAR_FLAGS{
